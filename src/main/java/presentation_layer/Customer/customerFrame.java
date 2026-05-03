@@ -2,7 +2,7 @@ package presentation_layer.Customer;
 import presentation_layer.Login.loginFrame;
 import presentation_layer.Style.SetColor;
 import presentation_layer.Style.SetFont;
-import presentation_layer.mdl.AccountPanel;
+import presentation_layer.mdl.AccountPanel;// van dung chung account panel
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -79,6 +79,7 @@ public class customerFrame extends JFrame {
         contentPanel.add(homePanel, HOME);
         contentPanel.add(orderPanel, ORDER);
         contentPanel.add(historyPanel, HISTORY);
+        // sua account
         contentPanel.add(accountPanel, ACCOUNT);
 
         add(contentPanel, BorderLayout.CENTER);
