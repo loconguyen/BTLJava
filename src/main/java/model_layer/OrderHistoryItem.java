@@ -16,6 +16,10 @@ public class OrderHistoryItem {
     private String status;
     private String shopID;
     private double amount;
+    private String shipperName;
+    private String addressName;
+    private String paymentMethod;
+    private String shopName;
 
     private List<OrderHistoryDetailItem> details = new ArrayList<>();
 
@@ -106,7 +110,37 @@ public class OrderHistoryItem {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+    public String getShipperName() {
+        return shipperName;
+    }
 
+    public void setShipperName(String shipperName) {
+        this.shipperName = shipperName;
+    }
+
+    public String getAddressName() {
+        return addressName;
+    }
+
+    public void setAddressName(String addressName) {
+        this.addressName = addressName;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
     public List<OrderHistoryDetailItem> getDetails() {
         return details;
     }

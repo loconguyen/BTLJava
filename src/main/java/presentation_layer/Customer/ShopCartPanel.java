@@ -1,6 +1,7 @@
 package presentation_layer.Customer;
 
 import model_layer.CartItem;
+import presentation_layer.Style.SetColor;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -43,7 +44,7 @@ public class ShopCartPanel extends JPanel {
 
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         titlePanel.setOpaque(false);
-
+// hien thi ten shop
         JLabel lblShopTitle = new JLabel(shopName);
         lblShopTitle.setFont(new Font("Arial", Font.BOLD, 18));
 
@@ -61,13 +62,15 @@ public class ShopCartPanel extends JPanel {
         productListPanel.setOpaque(false);
         productListPanel.setLayout(new BoxLayout(productListPanel, BoxLayout.Y_AXIS));
 
-        lblShopTotal = new JLabel("Tổng shop: 0 VND");
+        lblShopTotal = new JLabel("Tổng tiền: 0 VND");
         lblShopTotal.setFont(new Font("Arial", Font.BOLD, 14));
 
         btnSelectShop = new JButton("Đặt đơn");
         btnSelectShop.setFont(new Font("Arial", Font.BOLD, 14));
         btnSelectShop.setFocusPainted(false);
-        btnSelectShop.setPreferredSize(new Dimension(150, 35));
+        btnSelectShop.setPreferredSize(new Dimension(120, 35));
+        btnSelectShop.setBackground(SetColor.cam2);
+        btnSelectShop.setForeground(Color.white);
 
         btnSelectShop.addActionListener(e -> {
             if (listener != null) {
@@ -80,7 +83,7 @@ public class ShopCartPanel extends JPanel {
 
         bottomPanel.add(lblShopTotal, BorderLayout.WEST);
 
-        JPanel buttonWrap = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        JPanel buttonWrap = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
         buttonWrap.setOpaque(false);
         buttonWrap.add(btnSelectShop);
 
@@ -165,6 +168,8 @@ public class ShopCartPanel extends JPanel {
 
         JButton btnRemove = new JButton("Xóa");
         btnRemove.setFont(new Font("Arial", Font.BOLD, 12));
+        btnRemove.setBackground(SetColor.xanh3);
+        btnRemove.setForeground(SetColor.den);
         btnRemove.setFocusPainted(false);
         btnRemove.setPreferredSize(new Dimension(80, 28));
         btnRemove.setMaximumSize(new Dimension(80, 28));
@@ -202,11 +207,11 @@ public class ShopCartPanel extends JPanel {
 
         return row;
     }
-
+// sua sanpham sl dongia thanhtien
     private JLabel createCellLabel(String text, int width, int horizontalAlignment, boolean bold) {
         JLabel label = new JLabel(text);
         label.setHorizontalAlignment(horizontalAlignment);
-        label.setFont(new Font("Arial", bold ? Font.BOLD : Font.PLAIN, 13));
+        label.setFont(new Font("Segoe UI", bold ? Font.BOLD : Font.PLAIN, 13));
         Dimension size = new Dimension(width, 28);
         label.setPreferredSize(size);
         label.setMaximumSize(size);
@@ -215,7 +220,7 @@ public class ShopCartPanel extends JPanel {
     }
 
     private void updateShopTotal() {
-        lblShopTotal.setText("Tổng shop: " + formatMoney(calculateShopTotal()));
+        lblShopTotal.setText("Tổng tiền: " + formatMoney(calculateShopTotal()));
     }
 
     private double calculateShopTotal() {

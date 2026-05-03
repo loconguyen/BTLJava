@@ -4,6 +4,10 @@ import model_layer.account;
 import model_layer.order;
 import model_layer.order_detail;
 import model_layer.products;
+import presentation_layer.Style.SetColor;
+import presentation_layer.Style.SetFont;
+import presentation_layer.Style.StyledButton;
+import presentation_layer.Style.StyledTable;
 import presentation_layer.itf.HandleActionCallBack;
 import repository_layer.OrderReponsitory;
 import repository_layer.ProductRepository;
@@ -106,7 +110,7 @@ public class HandleAction {
                         JOptionPane.showOptionDialog(
                                 null,
                                 panel,
-                                "Details",
+                                "Chi tiết",
                                 JOptionPane.DEFAULT_OPTION,
                                 JOptionPane.PLAIN_MESSAGE,// Hoặc JOptionPane.OK_CANCEL_OPTION
                                 null,
@@ -123,12 +127,63 @@ public class HandleAction {
     //show for dbclick
 
     public static JPanel showImageProduct(products p, Component parent) {
+        JPanel mainPanel = new JPanel(new BorderLayout(20, 10)); // Khoảng cách giữa ảnh và chữ là 20px
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15)); // Căn lề ngoài
         String imgPath = new ProductRepository().getImagePath(p.getProductID());
-        if (imgPath == null) {
-            JOptionPane.showMessageDialog(parent, "Failed to load image for product: " + p.getName());
-            return null;
+        if (imgPath != null) {
+            JPanel imgPanel = showImg(imgPath);
+            if (imgPanel != null) {
+                mainPanel.add(imgPanel, BorderLayout.WEST);
+            }
+        } else {
+            // Nếu không có ảnh, hiển thị một ô xám thay thế
+            JLabel lblNoImage = new JLabel("Không có ảnh", SwingConstants.CENTER);
+            lblNoImage.setPreferredSize(new Dimension(200, 200)); // Kích thước ảnh mặc định
+            lblNoImage.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+            mainPanel.add(lblNoImage, BorderLayout.WEST);
         }
-        return showImg(imgPath);
+
+        JPanel infoPanel = new JPanel(new GridLayout(0, 2, 10, 15));
+// font
+//        Font labelFont = new Font("Arial", Font.BOLD, 14);
+//        Font valueFont = new Font("Arial", Font.PLAIN, 14);
+
+        String[][] productDetails = {
+                {"Mã sản phẩm:", p.getProductID()},
+                {"Tên sản phẩm:", p.getName()},
+                {"Danh mục (CatID):", p.getCatgID()},
+                {"Đơn giá:", String.format("%,.0f VND", p.getUnitPrice())}, // Format tiền tệ đẹp
+                {"Tồn kho:", String.valueOf(p.getUnitInStock())},
+                {"Đơn vị:", p.getQuantityPerUnit()}
+                // Nếu có trường Discontinued thì bạn có thể mở dòng dưới:
+                // {"Trạng thái:", p.isDiscontinued() ? "Ngừng bán" : "Đang bán"}
+        };
+
+        for (String[] detail : productDetails) {
+            JLabel lblTitle = new JLabel(detail[0]);
+            lblTitle.setFont(SetFont.heading5);
+            lblTitle.setForeground(SetColor.den);
+
+            JLabel lblValue = new JLabel(detail[1]);
+            lblValue.setFont(SetFont.normal);
+
+            if (detail[0].equals("Tồn kho:")) {
+                if (p.getUnitInStock() < 10) {
+                    lblValue.setForeground(SetColor.cam1); // Báo cam nếu tồn kho thấp
+                    lblValue.setFont(SetFont.heading5);
+                } else {
+                    lblValue.setForeground(SetColor.den); 
+                }
+            }
+
+            infoPanel.add(lblTitle);
+            infoPanel.add(lblValue);
+        }
+
+        // Thêm infoPanel vào phần giữa của mainPanel
+        mainPanel.add(infoPanel, BorderLayout.CENTER);
+
+        return mainPanel;
     }
 
     public static JPanel showOrderDetail(order o, JTable table, DefaultTableModel model, String shopId, Component parent) {
@@ -146,25 +201,25 @@ public class HandleAction {
         JLabel lblAmount = new JLabel();
         JLabel lblStatus = new JLabel();
 
-        infoPanel.add(new JLabel("Order ID:"));
+        infoPanel.add(new JLabel("Mã đơn hàng:"));
         infoPanel.add(lblOrderID);
-        infoPanel.add(new JLabel("Customer ID:"));
+        infoPanel.add(new JLabel("Mã khách hàng:"));
         infoPanel.add(lblCustomerID);
-        infoPanel.add(new JLabel("Shipper ID:"));
+        infoPanel.add(new JLabel("Mã shipper:"));
         infoPanel.add(lblShipperID);
-        infoPanel.add(new JLabel("Order Date:"));
+        infoPanel.add(new JLabel("Ngày đặt hàng:"));
         infoPanel.add(lblOrderDate);
-        infoPanel.add(new JLabel("Shipped Date:"));
+        infoPanel.add(new JLabel("Ngày giao hàng:"));
         infoPanel.add(lblShippedDate);
-        infoPanel.add(new JLabel("Freight:"));
+        infoPanel.add(new JLabel("Phí vận chuyển:"));
         infoPanel.add(lblFreight);
-        infoPanel.add(new JLabel("Amount:"));
+        infoPanel.add(new JLabel("Tổng tiền:"));
         infoPanel.add(lblAmount);
-        infoPanel.add(new JLabel("Status:"));
+        infoPanel.add(new JLabel("Trạng thái:"));
         infoPanel.add(lblStatus);
 
         DefaultTableModel productModel = new DefaultTableModel(
-                new String[]{"Product", "Qty"}, 0
+                new String[]{"Sản phẩm", "SL"}, 0
         );
         JTable productTable = new JTable(productModel);
 
@@ -172,9 +227,12 @@ public class HandleAction {
         detailPanel.add(new JScrollPane(productTable), BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton btnClose = new JButton("Close");
-        JButton btnConfirm = new JButton("Confirm");
-        JButton btnIAInvoice = new JButton("Invoice");
+        JButton btnClose = new JButton("Đóng");
+        JButton btnConfirm = new JButton("Xác nhận");
+        JButton btnIAInvoice = new JButton("Hóa đơn");
+        StyledButton.Button3(btnIAInvoice);
+        StyledButton.Button3(btnConfirm);
+        StyledButton.Button3(btnClose);
 
         btnClose.addActionListener(e -> {
             SwingUtilities.getWindowAncestor(detailPanel).dispose();
@@ -182,21 +240,24 @@ public class HandleAction {
 
         btnConfirm.addActionListener(e -> {
             boolean successAll = true;
-            boolean success = new OrderReponsitory().updateOrderStatus(o.getOrderID(), "CONFIRMED");
-            if (!success) {
-                successAll = false;
-                JOptionPane.showMessageDialog(parent, "Failed to confirm order: " + o.getOrderID());
-            }
+            // biet het p nao
             for (order_detail item : o.getItems()) {
-                boolean success2 = new ProductRepository().updateProductUnitInStock(item.getProduct().getProductID());
+                boolean success2 = new ProductRepository().updateProductUnitInStock(o.getOrderID());
                 if (!success2) {
                     successAll = false;
-                    JOptionPane.showMessageDialog(parent, "Failed to update stock for product: " + item.getProduct().getName());
+                    JOptionPane.showMessageDialog(parent, "Lỗi cập nhật số lượng trong kho của sản phẩm: " + item.getProduct().getName());
+                }
+                if (!successAll) {
+                    return;
                 }
             }
-
+            boolean success = new OrderReponsitory().updateOrderStatus(o.getOrderID(), "CONFIRMED", null);
+            if (!success) {
+                successAll = false;
+                JOptionPane.showMessageDialog(parent, "Lỗi xác nhận đơn hàng: " + o.getOrderID());
+            }
             if (successAll) {
-                JOptionPane.showMessageDialog(parent, "Order confirmed successfully!");
+                JOptionPane.showMessageDialog(parent, "Xác nhận đơn hàng thành công!");
                 // refresh table
                 showOrdersStatus(table, model, shopId, "PENDING", parent);
 
@@ -209,8 +270,8 @@ public class HandleAction {
 
         btnIAInvoice.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Save Invoice as PDF");
-            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("PDF Documents", "pdf"));
+            fileChooser.setDialogTitle("Lưu hóa đơn dưới dạng PDF");
+            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Tài liệu PDF", "pdf"));
 
             String defaultFileName = o.getOrderID() + ".pdf";
             fileChooser.setSelectedFile(new File(defaultFileName));
@@ -227,11 +288,11 @@ public class HandleAction {
 
                 exportPDFInvoice(o, path);
 
-                JOptionPane.showMessageDialog(parent, "Invoice exported successfully to: " + path);
-            }
-        });
+                JOptionPane.showMessageDialog(parent, "Xuất hóa đơn thành công tới: " + path);
+             }
+         });
 
-        if(o.getShippedDate()==null || o.getStatus().equals("PENDING")) {
+        if(o.getStatus().equals("PENDING")) {
             buttonPanel.add(btnConfirm);
         }
         buttonPanel.add(btnIAInvoice);
@@ -243,10 +304,10 @@ public class HandleAction {
         lblCustomerID.setText(o.getCustomerID());
         lblShipperID.setText(o.getShipperID());
         lblOrderDate.setText(o.getOrderDate().toString());
-        if (o.getShippedDate() != null) {
+            if (o.getShippedDate() != null) {
             lblShippedDate.setText(o.getShippedDate().toString());
         } else {
-            lblShippedDate.setText("Not shipped yet");
+            lblShippedDate.setText("Chưa giao");
         }
         lblFreight.setText(String.valueOf(o.getFreight()));
         lblAmount.setText(String.valueOf(o.getAmount()));
@@ -271,16 +332,16 @@ public class HandleAction {
             //format price
             DecimalFormat df = new DecimalFormat("#,###");
 
-            document.add(new Paragraph("HOA DON BAN HANG").setFontSize(20).setTextAlignment(TextAlignment.CENTER));
+            document.add(new Paragraph("Hóa đơn bán hàng").setFontSize(20).setTextAlignment(TextAlignment.CENTER));
             document.add(new Paragraph("Order ID: " + o.getOrderID()));
             document.add(new Paragraph("Customer: " + o.getCustomerID()));
 
             Table table = new Table(new float[]{2, 2, 1, 2}); // 4 cot
             table.setWidth(UnitValue.createPercentValue(100)); //100 width pdf
-            table.addHeaderCell("Product Name");
-            table.addHeaderCell("Price");
-            table.addHeaderCell("Qty");
-            table.addHeaderCell("Total");
+            table.addHeaderCell("Tên sản phẩm");
+            table.addHeaderCell("Giá");
+            table.addHeaderCell("SL");
+            table.addHeaderCell("Tổng");
 
             for (order_detail item : o.getItems()) {
                 table.addCell(item.getProduct().getName());
@@ -293,7 +354,7 @@ public class HandleAction {
 
             document.add(table);
             String amount = df.format(o.getAmount());
-            document.add(new Paragraph("\nTotal Amount: " + amount).setTextAlignment(TextAlignment.RIGHT));
+            document.add(new Paragraph("\nTổng tiền: " + amount).setTextAlignment(TextAlignment.RIGHT));
 
             document.close();
         } catch (Exception e) {
@@ -314,6 +375,7 @@ public class HandleAction {
         for (products p : productList) {
             model.addRow(new Object[]{
                     p.getProductID(),
+                    p.getCatgID(),
                     p.getName(),
                     p.getUnitPrice(),
                     p.getUnitInStock(),
@@ -325,7 +387,7 @@ public class HandleAction {
     //--------------------- handleAction for HomePanel------------------
     public static void handleEventAddProduct(JTable table, DefaultTableModel model, String shopId, Component parent) {
         // Tạo dialog
-        JDialog dialog = new JDialog((Frame) null, "Add Product", true);
+        JDialog dialog = new JDialog((Frame) null, "Thêm sản phẩm", true);
         dialog.setLayout(new GridLayout(0, 2, 10, 10));
 
         // Các trường nhập liệu
@@ -339,34 +401,40 @@ public class HandleAction {
         txtShopID.setEditable(false);
 
         // quantityPerUnit là combobox
-        JComboBox<String> cbQuantity = new JComboBox<>(new String[]{
-                "1 box", "1 dozen", "1 pack", "1 unit"
-        });
+//        JComboBox<String> cbQuantity = new JComboBox<>(new String[]{
+//                "1 box", "1 dozen", "1 pack", "1 unit"
+//        });
+//
+        JTextField txtQtyPU = new JTextField();
 
-        JCheckBox chkDiscontinued = new JCheckBox("Discontinued");
+        JCheckBox chkDiscontinued = new JCheckBox("Hết bán");
         JTextField txtImagePath = new JTextField();
 
         // Thêm label + field vào dialog
         dialog.add(new JLabel("Shop ID:"));
         dialog.add(txtShopID);
-        dialog.add(new JLabel("Category ID:"));
+            dialog.add(new JLabel("Mã danh mục:"));
         dialog.add(txtCatgID);
-        dialog.add(new JLabel("Name:"));
+            dialog.add(new JLabel("Tên:"));
         dialog.add(txtName);
-        dialog.add(new JLabel("Unit Price:"));
+        dialog.add(new JLabel("Giá tiền:"));
         dialog.add(txtUnitPrice);
-        dialog.add(new JLabel("Unit In Stock:"));
+        dialog.add(new JLabel("Số lượng :"));
         dialog.add(txtUnitInStock);
-        dialog.add(new JLabel("Quantity Per Unit:"));
-        dialog.add(cbQuantity);
-        dialog.add(new JLabel("Discontinued:"));
+        dialog.add(new JLabel("Đơn vị:"));
+        dialog.add(txtQtyPU);
+        dialog.add(new JLabel("Trang thái sản phẩm:"));
         dialog.add(chkDiscontinued);
-        dialog.add(new JLabel("Image Path:"));
+        dialog.add(new JLabel("Ảnh:"));
         dialog.add(txtImagePath);
 
-        // Nút Save và Cancel
-        JButton btnSave = new JButton("Save");
-        JButton btnCancel = new JButton("Cancel");
+        // Nút Lưu và Hủy
+        JButton btnSave = new JButton("Lưu");
+        JButton btnCancel = new JButton("Hủy");
+        
+        // them
+        StyledButton.button4(btnCancel);
+        StyledButton.button4(btnSave);
 
         btnSave.addActionListener(e -> {
             // Lấy dữ liệu từ form
@@ -375,7 +443,7 @@ public class HandleAction {
             String name = txtName.getText();
             double unitPrice = Double.parseDouble(txtUnitPrice.getText());
             int unitInStock = Integer.parseInt(txtUnitInStock.getText());
-            String quantityPerUnit = (String) cbQuantity.getSelectedItem();
+            String quantityPerUnit = txtQtyPU.getText();
             boolean discontinued = chkDiscontinued.isSelected();
             String imagePath = txtImagePath.getText();
 
@@ -384,7 +452,9 @@ public class HandleAction {
             // ps
             boolean success = new ProductRepository().insertProduct(newProduct);
             if (success) {
-                JOptionPane.showMessageDialog(dialog, "Product added successfully!");
+                JOptionPane.showMessageDialog(dialog, "Thêm sản phẩm thành công!");
+            } else {
+                JOptionPane.showMessageDialog(dialog, "Lỗi khi thêm sản phẩm. Vui lòng thử lại. (Hoặc lỗi CategoryID)");
             }
 
             dialog.dispose();
@@ -406,7 +476,7 @@ public class HandleAction {
     public static void handleEventEditProduct(JTable table, DefaultTableModel model, String shopId, Component parent) {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(parent, "Choose a product to edit!");
+            JOptionPane.showMessageDialog(parent, "Vui lòng chọn sản phẩm để sửa!");
             return;
         }
 
@@ -422,29 +492,29 @@ public class HandleAction {
         JTextField txtName = new JTextField(name);
         JTextField txtUnitPrice = new JTextField(String.valueOf(unitPrice));
         JTextField txtUnitInStock = new JTextField(String.valueOf(unitInStock));
-        JComboBox<String> cbQuantity = new JComboBox<>(new String[]{"1 box", "1 dozen", "1 pack", "1 unit"});
-        cbQuantity.setSelectedItem(quantityPerUnit);
+        JTextField txtQuantity = new JTextField(quantityPerUnit);
 
         JPanel panel = new JPanel(new GridLayout(0, 2));
-        panel.add(new JLabel("Category ID:"));
+        panel.add(new JLabel("Mã sản phẩm:"));
         panel.add(txtCatgID);
-        panel.add(new JLabel("Name:"));
+        panel.add(new JLabel("Tên sản phẩm:"));
         panel.add(txtName);
-        panel.add(new JLabel("Unit Price:"));
+        panel.add(new JLabel("Giá tiền:"));
         panel.add(txtUnitPrice);
-        panel.add(new JLabel("Unit In Stock:"));
+        panel.add(new JLabel("Số lượng:"));
         panel.add(txtUnitInStock);
-        panel.add(new JLabel("Quantity Per Unit:"));
-        panel.add(cbQuantity);
+        panel.add(new JLabel("Đơn vị:"));
+        panel.add(txtQuantity);
 
-        int result = JOptionPane.showConfirmDialog(parent, panel, "Edit Product", JOptionPane.OK_CANCEL_OPTION);
+        int result = JOptionPane.showConfirmDialog(parent, panel, "Sửa sản phẩm", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             ProductRepository repo = new ProductRepository();
             repo.updateProduct(productID, txtName.getText(),
                     Double.parseDouble(txtUnitPrice.getText()),
                     Integer.parseInt(txtUnitInStock.getText()),
-                    (String) cbQuantity.getSelectedItem());
-            JOptionPane.showMessageDialog(parent, "Product updated successfully!");
+                    txtQuantity.getText()
+            );
+            JOptionPane.showMessageDialog(parent, "Cập nhật sản phẩm thành công!");
             refreshTable(model, shopId);
         }
     }
@@ -452,13 +522,13 @@ public class HandleAction {
     public static void handeEventDeleteProduct(JTable table, DefaultTableModel model, String shopId, Component parent) {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(parent, "Choose a product to delete!");
+            JOptionPane.showMessageDialog(parent, "Vui lòng chọn sản phẩm để xóa!");
             return;
         }
         String productID = (String) model.getValueAt(row, 0);
         boolean success = new ProductRepository().deleteProduct(productID);
         if (success) {
-            JOptionPane.showMessageDialog(parent, "Product deleted successfully!");
+            JOptionPane.showMessageDialog(parent, "Xóa sản phẩm thành công!");
             refreshTable(model, shopId);
         }
     }
@@ -469,7 +539,7 @@ public class HandleAction {
         if (importedProducts != null && !importedProducts.isEmpty()) {
             ProductRepository repo = new ProductRepository();
 
-            String[] columnNames = {"Product ID", "CatagoryID", "Name", "Unit Price", "Unit In Stock", "Quantity Per Unit"};
+                String[] columnNames = {"Mã SP", "Mã danh mục", "Tên", "Đơn giá", "Tồn kho", "Đơn vị"};
 
             Object[][] data = new Object[importedProducts.size()][6];
 
@@ -487,12 +557,14 @@ public class HandleAction {
             JTable tbl = new JTable(mdl);
 
             JScrollPane scrollPane = new JScrollPane(tbl);
+            scrollPane.setPreferredSize(new Dimension(800, 350));
 
             int cf = JOptionPane.showConfirmDialog(
+                    parent,
                     scrollPane,
-                    "Preview Imported Products",
-                    "Confirm Import",
-                    JOptionPane.YES_NO_OPTION
+                    "Xác nhận nhập (" + importedProducts.size() + " sản phẩm)",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
             );
 
             // insert
@@ -502,18 +574,18 @@ public class HandleAction {
                     boolean success = repo.insertProduct(p);
                     if (!success) {
                         allSuccess = false;
-                        JOptionPane.showMessageDialog(parent, "Failed to import product: " + p.getName());
+                        JOptionPane.showMessageDialog(parent, "Lỗi nhập sản phẩm: " + p.getName());
                     }
                 }
                 if (allSuccess) {
-                    JOptionPane.showMessageDialog(parent, "All products imported successfully!");
+                    JOptionPane.showMessageDialog(parent, "Nhập tất cả sản phẩm thành công!");
                 }
                 refreshTable(model, shopId);
             } else {
-                JOptionPane.showMessageDialog(parent, "No products were imported.");
+                JOptionPane.showMessageDialog(parent, "Không có sản phẩm nào được nhập.");
             }
         } else {
-            JOptionPane.showMessageDialog(parent, "No products were imported.");
+            JOptionPane.showMessageDialog(parent, "Không có sản phẩm nào được nhập.");
         }
     }
 
@@ -521,28 +593,30 @@ public class HandleAction {
     public static void handleConfirmAll(JTable table, DefaultTableModel model, String shopId, Component parent) {
         int rowCount = table.getRowCount();
         if (rowCount == 0) {
-            JOptionPane.showMessageDialog(parent, "No orders to confirm!");
+            JOptionPane.showMessageDialog(parent, "Không có đơn hàng nào để xác nhận!");
             return;
         }
-        int confirm = JOptionPane.showConfirmDialog(parent, "Are you sure you want to confirm all orders?", "Confirm All", JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(parent, "Bạn có chắc muốn xác nhận tất cả đơn hàng không?", "Xác nhận tất cả", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             OrderReponsitory orderRepo = new OrderReponsitory();
+            ProductRepository productRepo = new ProductRepository();
             boolean allSuccess = true;
             for (int i = 0; i < rowCount; i++) {
                 String orderID = (String) model.getValueAt(i, 0);
-                boolean success = orderRepo.updateOrderStatus(orderID, "CONFIRMED");
+                boolean success2 = productRepo.updateProductUnitInStock(orderID);
+                if (!success2) {
+                    JOptionPane.showMessageDialog(parent, "Lỗi cập nhật số lượng trong kho cho đơn hàng: " + orderID);
+                    return;
+                }
+                boolean success = orderRepo.updateOrderStatus(orderID, "CONFIRMED", null);
                 if (!success) {
                     allSuccess = false;
-                    JOptionPane.showMessageDialog(parent, "Failed to confirm order: " + orderID);
+                    JOptionPane.showMessageDialog(parent, "Lỗi xác nhận đơn hàng: " + orderID);
+                    break;
                 }
             }
-            boolean success2 = new ProductRepository().updateProductUnitInStock(null);
-            if (!success2) {
-                allSuccess = false;
-                JOptionPane.showMessageDialog(parent, "Failed to update product stock after confirming orders!");
-            }
             if (allSuccess) {
-                JOptionPane.showMessageDialog(parent, "All orders confirmed successfully!");
+                JOptionPane.showMessageDialog(parent, "Xác nhận tất cả đơn hàng thành công!");
             }
             // refresh table
             showOrdersStatus(table, model, shopId, "PENDING", parent);
@@ -583,9 +657,9 @@ public class HandleAction {
 
     public static void showQtySold(String shopID, JPanel mainPanel) {
         DefaultTableModel model;
-        JTable table;
+        StyledTable table;
 
-        String[] columnNames = {"Product ID", "CategoryID", "Name", "Quantity Sold"};
+        String[] columnNames = {"Mã SP", "Mã danh mục", "Tên", "Số lượng đã bán"};
 
         ProductRepository productRepo = new ProductRepository();
         List<products> productList = productRepo.getQuantitySold(shopID);
@@ -602,7 +676,7 @@ public class HandleAction {
 
         mainPanel.removeAll();
         model = new DefaultTableModel(data, columnNames);
-        table = new JTable(model);
+        table = new StyledTable(model);
 
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -628,25 +702,25 @@ public class HandleAction {
         JLabel lblAmount = new JLabel();
         JLabel lblStatus = new JLabel();
 
-        infoPanel.add(new JLabel("Order ID:"));
+        infoPanel.add(new JLabel("Mã đơn hàng:"));
         infoPanel.add(lblOrderID);
-        infoPanel.add(new JLabel("Customer ID:"));
+        infoPanel.add(new JLabel("Mã khách hàng:"));
         infoPanel.add(lblCustomerID);
-        infoPanel.add(new JLabel("Shipper ID:"));
+        infoPanel.add(new JLabel("Mã shipper:"));
         infoPanel.add(lblShipperID);
-        infoPanel.add(new JLabel("Order Date:"));
+        infoPanel.add(new JLabel("Ngày đặt hàng:"));
         infoPanel.add(lblOrderDate);
-        infoPanel.add(new JLabel("Shipped Date:"));
+        infoPanel.add(new JLabel("Ngày giao hàng:"));
         infoPanel.add(lblShippedDate);
-        infoPanel.add(new JLabel("Freight:"));
+        infoPanel.add(new JLabel("Phí vận chuyển:"));
         infoPanel.add(lblFreight);
-        infoPanel.add(new JLabel("Amount:"));
+        infoPanel.add(new JLabel("Tổng tiền:"));
         infoPanel.add(lblAmount);
-        infoPanel.add(new JLabel("Status:"));
+        infoPanel.add(new JLabel("Trạng thái:"));
         infoPanel.add(lblStatus);
 
         DefaultTableModel productModel = new DefaultTableModel(
-                new String[]{"Product", "Qty"}, 0
+                new String[]{"Sản phẩm", "SL"}, 0
         );
         JTable productTable = new JTable(productModel);
 
@@ -654,22 +728,23 @@ public class HandleAction {
         detailPanel.add(new JScrollPane(productTable), BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton btnClose = new JButton("Close");
-        JButton btnConfirm = new JButton("Confirm");
+        JButton btnClose = new JButton("Đóng");
+        JButton btnPick = new JButton("Nhận");
+        JButton btnFinish = new JButton("Hoàn thành");
 
         btnClose.addActionListener(e -> {
             SwingUtilities.getWindowAncestor(detailPanel).dispose();
         });
 
-        btnConfirm.addActionListener(e -> {
+        btnPick.addActionListener(e -> {
             boolean successAll = true;
-            boolean success = new OrderReponsitory().updateOrderStatus(o.getOrderID(), nStatus);
+            boolean success = new OrderReponsitory().updateOrderStatus(o.getOrderID(), nStatus, id);
             if (!success) {
                 successAll = false;
-                JOptionPane.showMessageDialog(parent, "Failed to confirm order: " + o.getOrderID());
+                JOptionPane.showMessageDialog(parent, "Lỗi khi " + nStatus + " đơn hàng: " + o.getOrderID());
             }
             if (successAll) {
-                JOptionPane.showMessageDialog(parent, "Order confirmed successfully!");
+                JOptionPane.showMessageDialog(parent, "Thành công!");
 
                 Window window = SwingUtilities.getWindowAncestor(detailPanel);
                 if (window != null) {
@@ -678,8 +753,28 @@ public class HandleAction {
             }
         });
 
-        if(o.getShippedDate()==null || o.getStatus().equals("PENDING")) {
-            buttonPanel.add(btnConfirm);
+        btnFinish.addActionListener(e -> {
+            boolean successAll = true;
+            boolean success = new OrderReponsitory().updateOrderStatus(o.getOrderID(), nStatus, id);
+            if (!success) {
+                successAll = false;
+                JOptionPane.showMessageDialog(parent, "Lỗi khi " + nStatus + " đơn hàng: " + o.getOrderID());
+            }
+            if (successAll) {
+                JOptionPane.showMessageDialog(parent, "Thành công!");
+
+                Window window = SwingUtilities.getWindowAncestor(detailPanel);
+                if (window != null) {
+                    window.dispose();
+                }
+            }
+        });
+
+        if(o.getStatus().equals("CONFIRMED")) {
+            buttonPanel.add(btnPick);
+        }
+        if (o.getStatus().equals("SHIPPING")) {
+            buttonPanel.add(btnFinish);
         }
         buttonPanel.add(btnClose);
 
@@ -692,7 +787,7 @@ public class HandleAction {
         if (o.getShippedDate() != null) {
             lblShippedDate.setText(o.getShippedDate().toString());
         } else {
-            lblShippedDate.setText("Not shipped yet");
+            lblShippedDate.setText("Chưa giao");
         }
         lblFreight.setText(String.valueOf(o.getFreight()));
         lblAmount.setText(String.valueOf(o.getAmount()));
@@ -711,7 +806,7 @@ public class HandleAction {
 
 
     //-----------------------handleAction for AccountPanel-----------------------
-
+// can xem lai de khop voi 3 user + login
     public static void handleChangePassword(JPanel mainPanel, account acc) {
         JPanel changePassPanel = new JPanel(new GridBagLayout());
 
@@ -722,8 +817,8 @@ public class HandleAction {
         JPasswordField txtCurrentPass = new JPasswordField(15);
         JPasswordField txtNewPass = new JPasswordField(15);
         JPasswordField txtConfirmPass = new JPasswordField(15);
-        JButton btnSave = new JButton("Save");
-        JButton btnCancel = new JButton("Cancel");
+        JButton btnSave = new JButton("Lưu");
+        JButton btnCancel = new JButton("Hủy");
 
         gbc.gridx = 0; gbc.gridy = 0; changePassPanel.add(new JLabel("Current Password:"), gbc);
         gbc.gridx = 1; changePassPanel.add(txtCurrentPass, gbc);
@@ -743,18 +838,18 @@ public class HandleAction {
             String confirmPass = new String(txtConfirmPass.getPassword());
 
             if (!newPass.equals(confirmPass)) {
-                JOptionPane.showMessageDialog(mainPanel, "New password and confirm password do not match!");
+                JOptionPane.showMessageDialog(mainPanel, "Mật khẩu mới và xác nhận mật khẩu không khớp!");
                 return;
             }
 
             boolean success = new accountRepository().changePassword(acc.getAccountID(), currentPass, newPass);
             if (success) {
-                JOptionPane.showMessageDialog(mainPanel, "Password changed successfully!");
+                JOptionPane.showMessageDialog(mainPanel, "Đổi mật khẩu thành công!");
                 txtNewPass.setText("");
                 txtCurrentPass.setText("");
                 txtConfirmPass.setText("");
             } else {
-                JOptionPane.showMessageDialog(mainPanel, "Failed to change password! Please check your current password and try again.");
+                JOptionPane.showMessageDialog(mainPanel, "Đổi mật khẩu thất bại! Vui lòng kiểm tra mật khẩu hiện tại và thử lại.");
             }
         });
 

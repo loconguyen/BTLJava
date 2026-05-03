@@ -40,29 +40,28 @@ public class AuthService {
     // =========================
     // registerCustomer co them address
     // =========================
-    public String registerCustomer(String name, String phone, int gender, String birthdate,
+    public String registerCustomer( String username, int gender, String birthdate,
                                    String address,
-                                   String username, String password) {
+                                   String phone, String password) {
 
-        if (name == null || name.trim().isEmpty()
-                || phone == null || phone.trim().isEmpty()
+        if ( username == null || username.trim().isEmpty()
                 || birthdate == null || birthdate.trim().isEmpty()
                 || address == null || address.trim().isEmpty()
-                || username == null || username.trim().isEmpty()
+                || phone == null || phone.trim().isEmpty()
                 || password == null || password.trim().isEmpty()) {
             return "Vui lòng nhập đầy đủ thông tin";
         }
 
         if (accountRepository.existsUsername(username)) {
-            return "Username đã tồn tại";
+            return "Tài khoản đã tồn tại";
         }
 
         // Tạo customerID mới
         String customerID = customerRepository.generateNextCustomerID();
 
-        // insert vào bảng Customer
-        boolean ok1 = customerRepository.insertCustomer(customerID, name, phone, gender, birthdate);
-        if (!ok1) return "Lưu Customer thất bại";
+        // insert vào bảng CustomerString customerID, String name, String phone, int gender, String birthdate
+        boolean ok1 = customerRepository.insertCustomer(customerID, username, phone, gender, birthdate);
+        if (!ok1) return "Đăng kí thất bại";
 
         // insert vào bảng Address_Customer
         boolean okAddress = accountRepository.insertCustomerAddress(customerID, address);
@@ -81,16 +80,16 @@ public class AuthService {
         return "SUCCESS";
     }
 
-    public String registerShop(String name, String phone, String address, String email,
+    public String registerShop( String phone, String address, String email,
                                String username, String password) {
 
         if (accountRepository.existsUsername(username)) {
-            return "Username đã tồn tại";
+            return "Tài khoản đã tồn tại";
         }
 
         String shopID = shopRepository.generateNextShopID();
 
-        boolean ok1 = shopRepository.insertShop(shopID, name, phone, address, email);
+        boolean ok1 = shopRepository.insertShop(shopID, username, phone, address, email);
         if (!ok1) {
             return "Lưu Shop thất bại";
         }
@@ -109,7 +108,7 @@ public class AuthService {
         return "SUCCESS";
     }
 
-    public String registerShipper(String name, String phone, String companyName,
+    public String registerShipper( String phone, String companyName,
                                   String username, String password) {
 
         if (accountRepository.existsUsername(username)) {
@@ -118,7 +117,7 @@ public class AuthService {
 
         String shipperID = shipperRepository.generateNextShipperID();
 
-        boolean ok1 = shipperRepository.insertShipper(shipperID, name, phone, companyName);
+        boolean ok1 = shipperRepository.insertShipper(shipperID, username, phone, companyName);
         if (!ok1) return "Lưu Shipper thất bại";
 
         account acc = new account();

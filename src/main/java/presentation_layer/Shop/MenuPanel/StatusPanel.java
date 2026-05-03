@@ -1,6 +1,8 @@
 package presentation_layer.Shop.MenuPanel;
 
 import model_layer.order;
+import presentation_layer.Style.StyledButton;
+import presentation_layer.Style.StyledTable;
 import presentation_layer.mdl.RatioSplitPanel;
 import repository_layer.OrderReponsitory;
 
@@ -16,7 +18,7 @@ public class StatusPanel extends JPanel {
     public String id;
 
     DefaultTableModel model;
-    JTable table;
+    StyledTable table;
 
     public StatusPanel(String id) {
         this.id = id;
@@ -42,7 +44,7 @@ public class StatusPanel extends JPanel {
         OrderReponsitory orderRepo = new OrderReponsitory();
         List<order> orderList = orderRepo.getOrdersWithProducts("DELIVERED", id);
 
-        String[] columnNames = {"orderID", "customerID", "shipperID", "orderDate", "shippedDate"};
+        String[] columnNames = {"Mã đơn", "Mã khách hàng", "Mã shipper", "Ngày đặt", "Ngày giao"};
 
         Object[][] data = new Object[orderList.size()][5];
 
@@ -56,7 +58,7 @@ public class StatusPanel extends JPanel {
         }
 
         model = new DefaultTableModel(data, columnNames);
-        table = new JTable(model);
+        table = new StyledTable(model);
 
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -69,10 +71,13 @@ public class StatusPanel extends JPanel {
     }
 
     public void initControl(JPanel sidePanel) {
-        JButton btnDelivered = new JButton("Show Delivered");
-        JButton btnShipping = new JButton("Show Shipping");
-        JButton btnConfirmed = new JButton("Show Confirmed");
-
+        JButton btnDelivered = new JButton("Hiển thị Đã giao");
+        JButton btnShipping = new JButton("Hiển thị Đang giao");
+        JButton btnConfirmed = new JButton("Hiển thị Đã xác nhận");
+        StyledButton.button4(btnConfirmed);
+        StyledButton.button4(btnShipping);
+        StyledButton.button4(btnDelivered);
+        
         JPanel controlPanel = new JPanel(new GridLayout(3, 1, 10, 10));
         controlPanel.add(btnDelivered);
         controlPanel.add(btnShipping);
@@ -84,6 +89,15 @@ public class StatusPanel extends JPanel {
         btnShipping.addActionListener(e -> showOrdersStatus(table, model, this.id, "SHIPPING", this));
         btnConfirmed.addActionListener(e -> showOrdersStatus(table, model, this.id, "CONFIRMED", this));
 
+    }
+
+    // Expose table and model so parent frames can attach search/filter controls
+    public StyledTable getTable() {
+        return table;
+    }
+
+    public DefaultTableModel getModel() {
+        return model;
     }
 
 }

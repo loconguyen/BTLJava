@@ -2,6 +2,7 @@ package presentation_layer.Customer;
 
 import model_layer.OrderHistoryDetailItem;
 import model_layer.OrderHistoryItem;
+import presentation_layer.Style.SetFont;
 import service_layer.HistoryService;
 
 import javax.swing.*;
@@ -37,11 +38,13 @@ public class HistoryPanel extends JPanel {
         setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JLabel lblTitle = new JLabel("Lịch sử đơn hàng");
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
-        lblTitle.setBorder(new EmptyBorder(0, 0, 10, 0));
+        lblTitle.setFont(SetFont.heading1);
+        lblTitle.setBorder(new EmptyBorder(5, 5, 10, 5));
 
         String[] columns = {
-                "Mã đơn", "Ngày đặt", "Ngày giao", "Shipper", "Địa chỉ", "Thanh toán", "Phí ship", "Tổng tiền", "Trạng thái"
+                "Mã đơn", "Ngày đặt", "Ngày giao", "Shipper",
+                "Địa chỉ", "Thanh toán", "Shop",
+                "Phí ship", "Tổng tiền", "Trạng thái"
         };
 
         tableModel = new DefaultTableModel(columns, 0) {
@@ -53,8 +56,8 @@ public class HistoryPanel extends JPanel {
 
         table = new JTable(tableModel);
         table.setRowHeight(30);
-        table.setFont(new Font("Arial", Font.PLAIN, 13));
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+        table.setFont(SetFont.normal);
+        table.getTableHeader().setFont(SetFont.heading5);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane scrollPane = new JScrollPane(table);
@@ -62,9 +65,9 @@ public class HistoryPanel extends JPanel {
         add(lblTitle, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
     }
-
+// ham load data lai
     private void loadData() {
-        orders = historyService.getDeliveredOrdersByCustomer(customerID);
+        orders = historyService.getOrdersByCustomer(customerID);
         tableModel.setRowCount(0);
 
         DecimalFormat df = new DecimalFormat("#,##0");
@@ -74,9 +77,10 @@ public class HistoryPanel extends JPanel {
                     item.getOrderID(),
                     item.getOrderDate(),
                     item.getShippedDate(),
-                    item.getShipperID(),
-                    item.getAddressID(),
-                    item.getPaymentID(),
+                    item.getShipperName(),
+                    item.getAddressName(),
+                    item.getPaymentMethod(),
+                    item.getShopName(),
                     df.format(item.getFreight()) + " VND",
                     df.format(item.getAmount()) + " VND",
                     item.getStatus()
@@ -120,15 +124,15 @@ public class HistoryPanel extends JPanel {
         StringBuilder message = new StringBuilder();
         message.append("Order ID: ").append(selectedOrder.getOrderID()).append("\n");
         message.append("Customer ID: ").append(selectedOrder.getCustomerID()).append("\n");
-        message.append("Shipper ID: ").append(selectedOrder.getShipperID()).append("\n");
+        message.append("Shipper: ").append(selectedOrder.getShipperName()).append("\n");
         message.append("Order Date: ").append(selectedOrder.getOrderDate()).append("\n");
         message.append("Shipped Date: ").append(selectedOrder.getShippedDate()).append("\n");
         message.append("Freight: ").append(df.format(selectedOrder.getFreight())).append(" VND\n");
         message.append("Amount: ").append(df.format(selectedOrder.getAmount())).append(" VND\n");
-        message.append("Address ID: ").append(selectedOrder.getAddressID()).append("\n");
-        message.append("Payment ID: ").append(selectedOrder.getPaymentID()).append("\n");
+        message.append("Address: ").append(selectedOrder.getAddressName()).append("\n");
+        message.append("Payment: ").append(selectedOrder.getPaymentMethod()).append("\n");
+        message.append("Shop: ").append(selectedOrder.getShopName()).append("\n");
         message.append("Status: ").append(selectedOrder.getStatus()).append("\n");
-        message.append("Shop ID: ").append(selectedOrder.getShopID()).append("\n");
 
         infoArea.setText(message.toString());
 
@@ -164,5 +168,8 @@ public class HistoryPanel extends JPanel {
                 "Chi tiết đơn hàng",
                 JOptionPane.INFORMATION_MESSAGE
         );
+    }
+    public void refreshData() {
+        loadData();
     }
 }

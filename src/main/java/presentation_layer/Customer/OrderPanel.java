@@ -4,6 +4,8 @@ import model_layer.CartItem;
 import model_layer.addressCustomer;
 import model_layer.methodPayment;
 import model_layer.products;
+import presentation_layer.Style.SetColor;
+import presentation_layer.Style.SetFont;
 import service_layer.AddressService;
 import service_layer.OrderService;
 import service_layer.PaymentService;
@@ -37,6 +39,23 @@ public class OrderPanel extends JPanel {
     private String selectedShopID;
     private String selectedShopName;
 
+    private HistoryPanel historyPanel;
+
+    public OrderPanel(String customerID, HistoryPanel historyPanel) {
+        this.customerID = customerID;
+        this.historyPanel = historyPanel;
+
+        this.cartByShop = new LinkedHashMap<>();
+        this.shopPanels = new LinkedHashMap<>();
+
+        this.addressService = new AddressService();
+        this.paymentService = new PaymentService();
+
+        initUI();
+        bindEvents();
+        loadReferenceDataAsync();
+        renderShopBlocks();
+    }
     public OrderPanel(String customerID) {
         this.customerID = customerID;
         this.cartByShop = new LinkedHashMap<String, List<CartItem>>();
@@ -52,22 +71,23 @@ public class OrderPanel extends JPanel {
 
     private void initUI() {
         setLayout(new BorderLayout());
-        setBackground(new Color(245, 245, 245));
+        setBackground(SetColor.nen);
 
         shopContainer = new JPanel();
         shopContainer.setLayout(new BoxLayout(shopContainer, BoxLayout.Y_AXIS));
-        shopContainer.setBackground(new Color(245, 245, 245));
+        shopContainer.setBackground(SetColor.nen);
         shopContainer.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         scrollPane = new JScrollPane(shopContainer);
         scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+     //   scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         detailPanel = new OrderDetailPanel();
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, detailPanel);
         splitPane.setDividerLocation(760);
-        splitPane.setResizeWeight(0.65);
+        splitPane.setDividerSize(0);
+        //splitPane.setResizeWeight(0.65);
         splitPane.setBorder(null);
 
         add(splitPane, BorderLayout.CENTER);
@@ -141,7 +161,7 @@ public class OrderPanel extends JPanel {
 
         if (cartByShop.isEmpty()) {
             JLabel lblEmpty = new JLabel("Chưa có sản phẩm nào trong giỏ hàng.");
-            lblEmpty.setFont(new Font("Arial", Font.BOLD, 18));
+            lblEmpty.setFont(SetFont.heading3);
             lblEmpty.setAlignmentX(Component.CENTER_ALIGNMENT);
             shopContainer.add(Box.createVerticalStrut(50));
             shopContainer.add(lblEmpty);
@@ -387,7 +407,7 @@ public class OrderPanel extends JPanel {
 
         boolean success = orderService.placeOrder(
                 customerID,
-                selectedShopID,
+               // selectedShopID,
                 address.getAddressID(),
                 payment.getPayID(),
                 total,
@@ -397,13 +417,17 @@ public class OrderPanel extends JPanel {
         if (success) {
             JOptionPane.showMessageDialog(this, "Đặt hàng thành công.");
 
-            cartByShop.remove(selectedShopID);
+            if (historyPanel != null) {
+                historyPanel.refreshData();
+            }
+
+            cartByShop.remove(selectedShopID); 
             selectedShopID = null;
             selectedShopName = null;
 
             renderShopBlocks();
             detailPanel.clearBill();
-        } else {
+        }else {
             JOptionPane.showMessageDialog(this, "Đặt hàng thất bại.");
         }
     }

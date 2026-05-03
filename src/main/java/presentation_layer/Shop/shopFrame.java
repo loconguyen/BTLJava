@@ -1,6 +1,7 @@
 package presentation_layer.Shop;
 
 import presentation_layer.Shop.MenuPanel.*;
+import presentation_layer.Style.SetColor;
 import presentation_layer.mdl.AccountPanel;
 import presentation_layer.mdl.HeaderPanel;
 import presentation_layer.mdl.SideBarr;
@@ -20,7 +21,8 @@ public class shopFrame extends JFrame implements SidebarCallback {
     private ConfirmPanel confirmPanel;
     private StatusPanel statusPanel;
     private RevenuePanel revenuePanel;
-    private AccountPanel accountPanel = new AccountPanel(id);
+    private HeaderPanel header;
+    private AccountPanel accountPanel;
 
     public shopFrame(String username,String id) {
         this.id = id;
@@ -30,18 +32,19 @@ public class shopFrame extends JFrame implements SidebarCallback {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Sidebar
-        sb = new SideBarr(new String[]{"Home", "Confirm", "Status", "Revenue", "Account"}, this);
+        sb = new SideBarr(new String[]{"Trang chủ", "Xác nhận đơn", "Trạng thái đơn", "Doanh thu", "Tài khoản"}, this);
         mainPanel.add(sb, BorderLayout.WEST);
+        
 
-        // Header
-        JPanel header = new HeaderPanel(username);
-        mainPanel.add(header, BorderLayout.NORTH);
-
-        // Content
         homePanel = new HomePanel(id);
         confirmPanel = new ConfirmPanel(id);
         statusPanel = new StatusPanel(id);
         revenuePanel = new RevenuePanel(id);
+        accountPanel = new AccountPanel(id);
+
+        // Header
+        header = new HeaderPanel(username, homePanel.getTable(), homePanel.getModel());
+        mainPanel.add(header, BorderLayout.NORTH);
 
         content.add(homePanel, BorderLayout.CENTER);
         mainPanel.add(content, BorderLayout.CENTER);
@@ -57,20 +60,25 @@ public class shopFrame extends JFrame implements SidebarCallback {
         content.removeAll();
 
         switch (cmd) {
-            case "Home":
+            case "Trang chủ":
                 content.add(homePanel, BorderLayout.CENTER);
+                header.setTarget(homePanel.getTable(), homePanel.getModel());
                 break;
-            case "Confirm":
+            case "Xác nhận đơn":
                 content.add(confirmPanel, BorderLayout.CENTER);
+                header.setTarget(confirmPanel.getTable(), confirmPanel.getModel());
                 break;
-            case "Status":
+            case "Trạng thái đơn":
                 content.add(statusPanel, BorderLayout.CENTER);
+                header.setTarget(statusPanel.getTable(), statusPanel.getModel());
                 break;
-            case "Revenue":
+            case "Doanh thu":
                 content.add(revenuePanel, BorderLayout.CENTER);
+                header.setTarget(revenuePanel.getTable(), revenuePanel.getModel());
                 break;
-            case "Account":
+            case "Tài khoản":
                 content.add(accountPanel, BorderLayout.CENTER);
+                header.setTarget(null, null);
                 break;
         }
 
@@ -78,7 +86,7 @@ public class shopFrame extends JFrame implements SidebarCallback {
         content.repaint();
     }
 
-    public static void main(String[] args) {
-        new shopFrame("Shop Owner", "S001").setVisible(true);
-    }
+//    public static void main(String[] args) {
+//        new shopFrame("Shop Owner", "S001").setVisible(true);
+//    }
 }

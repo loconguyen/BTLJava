@@ -1,5 +1,7 @@
 package presentation_layer.Shop.MenuPanel;
 
+import presentation_layer.Style.StyledButton;
+import presentation_layer.Style.StyledTable;
 import presentation_layer.mdl.RatioSplitPanel;
 import repository_layer.ProductRepository;
 import model_layer.products;
@@ -16,7 +18,8 @@ public class HomePanel extends JPanel {
     private String id;
 
     DefaultTableModel model;
-    JTable table;
+    StyledTable table;
+   
 
     public HomePanel(String id) {
         this.id = id;
@@ -45,7 +48,7 @@ public class HomePanel extends JPanel {
         ProductRepository productRepo = new ProductRepository();
         List<products> productList = productRepo.findByShopID(id);
 
-        String[] columnNames = {"Product ID", "CatagoryID", "Name", "Unit Price", "Unit In Stock", "Quantity Per Unit"};
+        String[] columnNames = {"Mã SP", "Mã danh mục", "Tên", "Đơn giá", "Tồn kho", "Đơn vị"};
 
         Object[][] data = new Object[productList.size()][6];
 
@@ -60,7 +63,7 @@ public class HomePanel extends JPanel {
         }
 
         model = new DefaultTableModel(data, columnNames);
-        table = new JTable(model);
+        table = new StyledTable(model);
 
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -74,10 +77,16 @@ public class HomePanel extends JPanel {
     }
 
     public void initControl(JPanel sidePanel) {
-        JButton btnAdd = new JButton("Add Product");
-        JButton btnEdit = new JButton("Edit Product");
-        JButton btnRemove = new JButton("Delete Product");
-        JButton btnImEx = new JButton("Import");
+        JButton btnAdd = new JButton("Thêm sản phẩm");
+        JButton btnEdit = new JButton("Sửa sản phẩm");
+        JButton btnRemove = new JButton("Xóa sản phẩm");
+        JButton btnImEx = new JButton("Xuất// chx hiểu ");
+        StyledButton.button4(btnImEx);
+        StyledButton.button4(btnAdd);
+        StyledButton.button4(btnEdit);
+        StyledButton.button4(btnRemove);
+        
+        
 
 
         JPanel controlPanel = new JPanel(new GridLayout(4, 1, 10, 10));
@@ -92,6 +101,15 @@ public class HomePanel extends JPanel {
         btnEdit.addActionListener(e -> handleEventEditProduct(table, model, this.id, this));
         btnRemove.addActionListener(e -> handeEventDeleteProduct(table, model, this.id, this));
         btnImEx.addActionListener(e -> handleEventImportProduct(table, model, this.id, this));
+    }
+
+    // Expose table and model so parent frames can attach search/filter controls
+    public StyledTable getTable() {
+        return table;
+    }
+
+    public DefaultTableModel getModel() {
+        return model;
     }
 
 

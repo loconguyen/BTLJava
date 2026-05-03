@@ -10,7 +10,7 @@ public class OrderService {
     private final OrderReponsitory orderRepository = new OrderReponsitory();
 
     public boolean placeOrder(String customerID,
-                              String shopID,
+                              
                               String addressID,
                               String payID,
                               double amount,
@@ -20,7 +20,7 @@ public class OrderService {
 
         return orderRepository.insertOrder(
                 customerID,
-                shopID,
+              
                 addressID,
                 payID,
                 amount,

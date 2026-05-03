@@ -30,9 +30,10 @@ public class methodPayment {
 
     @Override
     public String toString() {
-        return "MethodPayment{" +
-                "payID=" + payID +
-                ", paymentMethod='" + paymentMethod + '\'' +
-                '}';
+//        return "MethodPayment{" +
+//                "payID=" + payID +
+//                ", paymentMethod='" + paymentMethod + '\'' +
+//                '}';
+    	return paymentMethod;
     }
 }

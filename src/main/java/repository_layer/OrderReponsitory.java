@@ -26,9 +26,9 @@ public class OrderReponsitory {
         Map<String, order> map = new LinkedHashMap<>();
 
         String sql = "SELECT o.*, p.*, od.quantity " +
-                "FROM qldonhang.orders o " +
-                "JOIN qldonhang.order_detail od ON o.orderID = od.orderID " +
-                "JOIN qldonhang.product p ON p.productID = od.productID " +
+                "FROM orders o " +
+                "JOIN order_detail od ON o.orderID = od.orderID " +
+                "JOIN product p ON p.productID = od.productID " +
                 "WHERE o.status = ? ";
 
         if (shopID != null && !shopID.trim().isEmpty()) {
@@ -102,9 +102,9 @@ public class OrderReponsitory {
         Map<String, order> map = new LinkedHashMap<>();
 
         String sql = "SELECT o.*, p.*, od.quantity " +
-                "FROM qldonhang.orders o " +
-                "JOIN qldonhang.order_detail od ON o.orderID = od.orderID " +
-                "JOIN qldonhang.product p ON p.productID = od.productID " +
+                "FROM orders o " +
+                "JOIN order_detail od ON o.orderID = od.orderID " +
+                "JOIN product p ON p.productID = od.productID " +
                 "WHERE o.status = ? ";
 
         if (shipperID != null && !shipperID.trim().isEmpty()) {
@@ -194,9 +194,9 @@ public class OrderReponsitory {
 
     public double getTotalAmount(String ShopID, LocalDate date){
         String sql = "SELECT o.*, p.*, od.quantity " +
-                "FROM qldonhang.orders o " +
-                "JOIN qldonhang.order_detail od ON o.orderID = od.orderID " +
-                "JOIN qldonhang.product p ON p.productID = od.productID " +
+                "FROM orders o " +
+                "JOIN order_detail od ON o.orderID = od.orderID " +
+                "JOIN product p ON p.productID = od.productID " +
                 "WHERE p.shopID = ? and o.status = ?";
 
         if (date != null) {
@@ -234,9 +234,9 @@ public class OrderReponsitory {
 
     public LocalDate getMinOrderDate(String shopID) {
         String sql = "SELECT MIN(o.orderDate) AS minDate " +
-                "FROM qldonhang.orders o " +
-                "JOIN qldonhang.order_detail od ON o.orderID = od.orderID " +
-                "JOIN qldonhang.product p ON p.productID = od.productID " +
+                "FROM orders o " +
+                "JOIN order_detail od ON o.orderID = od.orderID " +
+                "JOIN product p ON p.productID = od.productID " +
                 "WHERE p.shopID = ?";
 
         try (Connection con = DBconnection.openConnection();
@@ -262,7 +262,7 @@ public class OrderReponsitory {
     public Map<String, Double> getMonthlyFreightStats(String shipperID) {
         Map<String, Double> monthlyStats = new LinkedHashMap<>();
         String sql = "SELECT YEAR(o.shippedDate) AS year, MONTH(o.shippedDate) AS month, SUM(o.freight) AS totalFreight " +
-                "FROM qldonhang.orders o " +
+                "FROM orders o " +
                 "WHERE o.shipperID = ? AND o.status = 'DELIVERED' AND o.shippedDate IS NOT NULL " +
                 "GROUP BY YEAR(o.shippedDate), MONTH(o.shippedDate) " +
                 "ORDER BY year DESC, month DESC";
@@ -335,7 +335,6 @@ public class OrderReponsitory {
     }
 
     public boolean insertOrder(String customerID,
-                               String shopID,
                                String addressID,
                                String payID,
                                double amount,
@@ -367,7 +366,7 @@ public class OrderReponsitory {
             System.out.println("payID = " + payID);
 
             insertPayment(con, paymentID, amount, payID);
-            insertOrderRow(con, orderID, customerID, shopID, addressID, paymentID, amount, freight);
+            insertOrderRow(con, orderID, customerID, addressID, paymentID, amount, freight);
             insertOrderDetails(con, orderID, items);
 
             con.commit();
@@ -415,34 +414,33 @@ public class OrderReponsitory {
     }
 
     private void insertOrderRow(Connection con,
-                                String orderID,
-                                String customerID,
-                                String shopID,
-                                String addressID,
-                                String paymentID,
-                                double amount,
-                                double freight) throws SQLException {
+            String orderID,
+            String customerID,
+            String addressID,
+            String paymentID,
+            double amount,
+            double freight) throws SQLException {
 
-        String sql = "INSERT INTO Orders "
-                + "(orderID, customerID, shipperID, orderDate, shippedDate, freight, addressID, paymentID, status, shopID, amount) "
-                + "VALUES (?, ?, NULL, GETDATE(), NULL, ?, ?, ?, ?, ?, ?)";
+String sql = "INSERT INTO Orders "
++ "(orderID, customerID, shipperID, orderDate, shippedDate, freight, addressID, paymentID, status, amount) "
++ "VALUES (?, ?, NULL, GETDATE(), NULL, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, orderID);
-            ps.setString(2, customerID);
-            ps.setDouble(3, freight);
-            ps.setString(4, addressID);
-            ps.setString(5, paymentID);
-            ps.setString(6, "PENDING");
-            ps.setString(7, shopID);
-            ps.setDouble(8, amount);
+try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-            int row = ps.executeUpdate();
-            if (row <= 0) {
-                throw new SQLException("Insert Orders thất bại.");
-            }
-        }
-    }
+ps.setString(1, orderID);        // orderID
+ps.setString(2, customerID);     // customerID
+ps.setDouble(3, freight);        // freight
+ps.setString(4, addressID);      // addressID
+ps.setString(5, paymentID);      // paymentID
+ps.setString(6, "PENDING");      // status
+ps.setDouble(7, amount);         // amount
+
+int row = ps.executeUpdate();
+if (row <= 0) {
+throw new SQLException("Insert Orders thất bại.");
+}
+}
+}
 
     private void insertOrderDetails(Connection con, String orderID, List<CartItem> items) throws SQLException {
         String sql = "INSERT INTO Order_Detail(orderID, productID, unitPrice, quantity, discount) "
@@ -463,6 +461,43 @@ public class OrderReponsitory {
             }
 
             ps.executeBatch();
+        }
+    }
+
+    public boolean updateOrderStatus(String orderID, String newStatus, String shipperID) {
+
+        StringBuilder sql = new StringBuilder("UPDATE orders SET status = ?");
+        List<Object> params = new ArrayList<>();
+
+        params.add(newStatus);
+
+        // nếu có shipper → update luôn
+        if (shipperID != null && !shipperID.trim().isEmpty()) {
+            sql.append(", shipperID = ?");
+            params.add(shipperID);
+        }
+
+        // nếu là DELIVERED → cập nhật ngày giao
+        if ("DELIVERED".equalsIgnoreCase(newStatus)) {
+            sql.append(", shippedDate = GETDATE()");
+        }
+
+        sql.append(" WHERE orderID = ?");
+        params.add(orderID);
+
+        try (Connection con = DBconnection.openConnection();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

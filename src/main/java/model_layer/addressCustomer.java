@@ -40,10 +40,11 @@ public class addressCustomer {
 
     @Override
     public String toString() {
-        return "AddressCustomer{" +
-                "addressID=" + addressID +
-                ", customerID=" + customerID +
-                ", address='" + address + '\'' +
-                '}';
-    }
+//        return "AddressCustomer{" +
+//                "addressID=" + addressID +
+//                ", customerID=" + customerID +
+//                ", address='" + address + '\'' +
+//                '}';
+    	return address;
+ }
 }

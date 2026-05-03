@@ -1,15 +1,14 @@
 package presentation_layer.Customer;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import presentation_layer.Style.SetColor;
+import presentation_layer.Style.SetFont;
+import presentation_layer.Style.StyledButton;
 
 public class SideBarPanel extends JPanel {
 
@@ -23,34 +22,31 @@ public class SideBarPanel extends JPanel {
     }
 
     private void initUI() {
-        setPreferredSize(new Dimension(210, 0));
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(new EmptyBorder(20, 15, 20, 15));
-        setBackground(new Color(245, 245, 245));
+        setPreferredSize(new Dimension(220, 0));
 
-        btnHome = createMenuButton("HOME");
-        btnOrder = createMenuButton("ORDER");
-        btnHistory = createMenuButton("HISTORY");
-        btnAccount = createMenuButton("ACCOUNT");
+        // 
+        setLayout(new java.awt.GridLayout(4, 1, 0, 10));
+
+        setBorder(new EmptyBorder(15, 10, 15, 10));
+        setBackground(SetColor.nen);
+
+        btnHome = createMenuButton("Trang chủ");
+        btnOrder = createMenuButton("Đơn hàng");
+        btnHistory = createMenuButton("Lịch sử");
+        btnAccount = createMenuButton("Tài khoản");
 
         add(btnHome);
-        add(Box.createVerticalStrut(20));
         add(btnOrder);
-        add(Box.createVerticalStrut(20));
         add(btnHistory);
-        add(Box.createVerticalStrut(20));
         add(btnAccount);
-        add(Box.createVerticalGlue());
     }
 
     private JButton createMenuButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 17));
-        button.setFocusPainted(false);
-        button.setBackground(new Color(214, 228, 240));
-        button.setMaximumSize(new Dimension(180, 90));
-        button.setPreferredSize(new Dimension(180, 70));
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        StyledButton button = new StyledButton(text);
+
+        button.setFont(SetFont.heading3);
+
+
         return button;
     }
 

@@ -1,14 +1,17 @@
 package presentation_layer.Login;
 
+import presentation_layer.Style.SetColor;
+import presentation_layer.Style.SetFont;
+import presentation_layer.Style.StyledButton;
 import service_layer.AuthService;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class RegisterShipperFrame extends JFrame {
-    private JTextField txtName;
+    
     private JTextField txtPhone;
-    private JTextField txtCompanyName;
+    private JComboBox<String> cbCompanyName;
     private JTextField txtUsername;
     private JPasswordField txtPassword;
     private JButton btnRegister;
@@ -23,45 +26,74 @@ public class RegisterShipperFrame extends JFrame {
 
     private void initUI() {
         setTitle("Register Shipper");
-        setSize(500, 580);
+        setSize(600, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
         setLayout(null);
-        getContentPane().setBackground(new Color(245, 245, 245));
+        getContentPane().setBackground(SetColor.xanh1);
 
-        JLabel lblTitle = new JLabel("shipper");
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 32));
-        lblTitle.setForeground(new Color(45, 132, 197));
-        lblTitle.setBounds(155, 30, 200, 40);
+        JLabel lblTitle = new JLabel("ĐĂNG KÍ TÀI KHOẢN");
+        lblTitle.setFont(SetFont.heading1);
+        lblTitle.setForeground(Color.WHITE);
+        lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTitle.setBounds(80, 25, 420, 45);
         add(lblTitle);
 
-        addLabel("NAME", 70, 100);
-        txtName = addTextField(70, 125);
+        JLabel lblSubTitle = new JLabel("Shipper");
+        lblSubTitle.setFont(SetFont.heading3);
+        lblSubTitle.setForeground(Color.WHITE);
+        lblSubTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        lblSubTitle.setBounds(80, 75, 420, 30);
+        add(lblSubTitle);
 
-        addLabel("PHONE", 70, 170);
-        txtPhone = addTextField(70, 195);
+        int x = 130;
+        int inputW = 320;
+        int inputH = 35;
 
-        addLabel("COMPANY NAME", 70, 240);
-        txtCompanyName = addTextField(70, 265);
+        addLabel("Tên đăng nhập:", x, 135);
+        txtUsername = addTextField(x, 160);
 
-        addLabel("USERNAME", 70, 310);
-        txtUsername = addTextField(70, 335);
+        addLabel("Số điện thoại:", x, 205);
+        txtPhone = addTextField(x, 230);
 
-        addLabel("PASSWORD", 70, 380);
+        addLabel("Công ty vận chuyển:", x, 275);
+        cbCompanyName = new JComboBox<>(new String[]{
+                "Giao Hàng Nhanh",
+                "Giao Hàng Tiết Kiệm",
+                "Viettel Post",
+                "VNPost",
+                "J&T Express",
+                "Ninja Van",
+                "Grab Express",
+                "Shopee Express",
+                "Lalamove",
+                "Best Express",
+                "vnc"
+        });
+        cbCompanyName.setFont(SetFont.normal);
+        cbCompanyName.setBounds(x, 300, inputW, inputH);
+        add(cbCompanyName);
+
+        addLabel("Tạo mật khẩu:", x, 345);
         txtPassword = new JPasswordField();
-        txtPassword.setBounds(70, 405, 320, 35);
+        txtPassword.setFont(SetFont.normal);
+        txtPassword.setBounds(x, 370, inputW, inputH);
+        txtPassword.setBorder(null);
         add(txtPassword);
 
-        btnRegister = new JButton("REGIS");
-        btnRegister.setFont(new Font("Arial", Font.BOLD, 18));
-        btnRegister.setBounds(170, 470, 140, 40);
+        btnRegister = new JButton("Đăng kí");
+        btnRegister.setBounds(x, 430, 200, 42);
+        StyledButton.Button2(btnRegister);
         add(btnRegister);
 
-        btnBack = new JButton("Back");
-        btnBack.setBounds(330, 470, 80, 40);
+        btnBack = new JButton("Trở lại");
+        btnBack.setBounds(x + 220, 430, 100, 42);
+        StyledButton.Button2(btnBack);
         add(btnBack);
 
         btnRegister.addActionListener(e -> handleRegister());
+
         btnBack.addActionListener(e -> {
             new RegisterChooseRoleFrame().setVisible(true);
             dispose();
@@ -69,32 +101,41 @@ public class RegisterShipperFrame extends JFrame {
     }
 
     private void addLabel(String text, int x, int y) {
-        JLabel lbl = new JLabel(text);
-        lbl.setBounds(x, y, 200, 20);
-        add(lbl);
+        JLabel label = new JLabel(text);
+        label.setFont(SetFont.normal);
+        label.setForeground(Color.WHITE);
+        label.setBounds(x, y, 320, 20);
+        add(label);
     }
 
     private JTextField addTextField(int x, int y) {
-        JTextField txt = new JTextField();
-        txt.setBounds(x, y, 320, 35);
-        add(txt);
-        return txt;
+        JTextField textField = new JTextField();
+        textField.setFont(SetFont.normal);
+        textField.setBounds(x, y, 320, 35);
+        textField.setBorder(null);
+        add(textField);
+        return textField;
     }
 
     private void handleRegister() {
-        String name = txtName.getText().trim();
+        
         String phone = txtPhone.getText().trim();
-        String companyName = txtCompanyName.getText().trim();
+        String companyName = cbCompanyName.getSelectedItem().toString();
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword()).trim();
 
-        if (name.isEmpty() || phone.isEmpty() || companyName.isEmpty()
+        if ( phone.isEmpty()
                 || username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin");
             return;
         }
 
-        String result = authService.registerShipper(name, phone, companyName, username, password);
+        String result = authService.registerShipper(      
+                phone,
+                companyName,
+                username,
+                password
+        );
 
         if ("SUCCESS".equals(result)) {
             JOptionPane.showMessageDialog(this, "Đăng ký shipper thành công");

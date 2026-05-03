@@ -1,6 +1,11 @@
 package presentation_layer.Login;
 
 import javax.swing.*;
+
+import presentation_layer.Style.SetColor;
+import presentation_layer.Style.SetFont;
+import presentation_layer.Style.StyledButton;
+
 import java.awt.*;
 
 public class RegisterChooseRoleFrame extends JFrame {
@@ -14,43 +19,64 @@ public class RegisterChooseRoleFrame extends JFrame {
     }
 
     private void initUI() {
-        setTitle("Register");
-        setSize(500, 500);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
-        getContentPane().setBackground(new Color(245, 245, 245));
+    	setTitle("RegisterChooseRoleFrame");
+    	setSize(600, 700);
+    	setLocationRelativeTo(null);
+    	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JLabel lblTitle = new JLabel("register");
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 38));
-        lblTitle.setBounds(150, 50, 220, 50);
-        add(lblTitle);
+    	JPanel mainPanel = new JPanel(new GridBagLayout());
+    	mainPanel.setBackground(Color.WHITE);
+    	add(mainPanel);
 
-        btnCustomer = new JButton("customer");
-        btnCustomer.setFont(new Font("Arial", Font.BOLD, 18));
-        btnCustomer.setBounds(30, 180, 120, 120);
-        btnCustomer.setBackground(new Color(45, 132, 197));
-        btnCustomer.setForeground(Color.WHITE);
-        add(btnCustomer);
+    	GridBagConstraints gbc = new GridBagConstraints();
+    	gbc.gridx = 0;
+    	gbc.weightx = 1;
+    	gbc.anchor = GridBagConstraints.CENTER;
 
-        btnShop = new JButton("shop");
-        btnShop.setFont(new Font("Arial", Font.BOLD, 18));
-        btnShop.setBounds(180, 180, 120, 120);
-        btnShop.setBackground(new Color(45, 132, 197));
-        btnShop.setForeground(Color.WHITE);
-        add(btnShop);
+    	int y = 0;
 
-        btnShipper = new JButton("shipper");
-        btnShipper.setFont(new Font("Arial", Font.BOLD, 18));
-        btnShipper.setBounds(330, 180, 120, 120);
-        btnShipper.setBackground(new Color(45, 132, 197));
-        btnShipper.setForeground(Color.WHITE);
-        add(btnShipper);
+    	// Title
+    	JLabel lblTitle = new JLabel("CHỌN LOẠI TÀI KHOẢN");
+    	lblTitle.setFont(SetFont.heading1);
+    	lblTitle.setForeground(Color.white);
+    	
 
-        btnBack = new JButton("Quay lại");
-        btnBack.setBounds(190, 370, 110, 35);
-        add(btnBack);
+    	gbc.gridy = y++;
+    	gbc.insets = new Insets(0, 0, 25, 0);
+    	mainPanel.add(lblTitle, gbc);
 
+    	// Customer
+    	btnCustomer = createRoleButton("Khách hàng");
+
+    	gbc.gridy = y++;
+    	gbc.insets = new Insets(0, 0, 18, 0);
+    	mainPanel.add(btnCustomer, gbc);
+
+    	// Shop
+    	btnShop = createRoleButton("Shop");
+
+    	gbc.gridy = y++;
+    	gbc.insets = new Insets(0, 0, 18, 0);
+    	mainPanel.add(btnShop, gbc);
+
+    	// Shipper
+    	btnShipper = createRoleButton("Shipper");
+
+    	gbc.gridy = y++;
+    	gbc.insets = new Insets(0, 0, 45, 0);
+    	mainPanel.add(btnShipper, gbc);
+
+    	// Back button
+    	btnBack = new JButton("Trở lại");
+    	btnBack.setPreferredSize(new Dimension(120, 45));
+    	btnBack.setBackground(SetColor.xanh1);
+    	btnBack.setForeground(Color.WHITE);
+    	StyledButton.Button3(btnBack);
+    	
+
+    	gbc.gridy = y++;
+    	gbc.insets = new Insets(0, 0, 0, 0);
+    	mainPanel.add(btnBack, gbc);
         btnCustomer.addActionListener(e -> {
             new RegisterCustomerFrame().setVisible(true);
             dispose();
@@ -71,4 +97,31 @@ public class RegisterChooseRoleFrame extends JFrame {
             dispose();
         });
     }
+
+	private JButton createRoleButton(String text) {
+		 JButton button = new JButton(text);
+
+		    button.setFont(SetFont.heading3);
+		    button.setPreferredSize(new Dimension(280, 85));
+		    button.setBackground(SetColor.xanh2);
+		    button.setForeground(SetColor.den);
+
+		    button.setFocusPainted(false);
+		    button.setBorderPainted(false);
+		    button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		    button.addMouseListener(new java.awt.event.MouseAdapter() {
+		        public void mouseEntered(java.awt.event.MouseEvent evt) {
+		            button.setBackground(SetColor.cam2); // khi hover
+		            button.setForeground(SetColor.den);
+		        }
+
+		        public void mouseExited(java.awt.event.MouseEvent evt) {
+		            button.setBackground(SetColor.xanh2); // khi rời chuột
+		            button.setForeground(SetColor.den);
+		        }
+		    });
+
+		    return button;
+		
+	}
 }

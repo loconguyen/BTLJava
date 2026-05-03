@@ -1,5 +1,7 @@
 package presentation_layer.Customer;
 import presentation_layer.Login.loginFrame;
+import presentation_layer.Style.SetColor;
+import presentation_layer.Style.SetFont;
 import presentation_layer.mdl.AccountPanel;
 
 import java.awt.BorderLayout;
@@ -55,6 +57,7 @@ public class customerFrame extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
+        setBackground(SetColor.nen);
 
         add(createHeader(), BorderLayout.NORTH);
 
@@ -63,12 +66,15 @@ public class customerFrame extends JFrame {
 
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
+        contentPanel.setBackground(SetColor.nen);
 
-        
-        orderPanel = new OrderPanel(customerID);
-        homePanel = new ProductListPanel(orderPanel);
         historyPanel = new HistoryPanel(customerID);
+        orderPanel = new OrderPanel(customerID, historyPanel); // tạo trước
+
+        homePanel = new ProductListPanel(orderPanel); // truyền đúng
         accountPanel = new AccountPanel(customerID);
+        
+        
 
         contentPanel.add(homePanel, HOME);
         contentPanel.add(orderPanel, ORDER);
@@ -80,26 +86,37 @@ public class customerFrame extends JFrame {
 // header
     private JPanel createHeader() {
         JPanel headerPanel = new JPanel(new BorderLayout(20, 10));
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));// can can lai
+        headerPanel.setBackground(SetColor.xanh1);
 
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.setBackground(SetColor.xanh1);
         lblUsername = new JLabel("Xin chào, " + username);
-        lblUsername.setFont(new Font("Arial", Font.BOLD, 18));
+        lblUsername.setFont(SetFont.heading3);
+        lblUsername.setForeground(SetColor.nen);
         leftPanel.add(lblUsername);
 
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        centerPanel.setBackground(SetColor.xanh1);
         txtSearch = new JTextField(28);
-        txtSearch.setFont(new Font("Arial", Font.PLAIN, 16));
+        txtSearch.setFont(SetFont.normal);
+
         btnSearch = new JButton("Tìm kiếm");
-        btnSearch.setFont(new Font("Arial", Font.BOLD, 14));
+       
+        btnSearch.setFont(SetFont.heading5);
+        btnSearch.setBackground(SetColor.cam1);
+        btnSearch.setForeground(SetColor.nen);
 
         centerPanel.add(txtSearch);
         centerPanel.add(btnSearch);
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightPanel.setBackground(SetColor.xanh1);
         btnLogout = new JButton("Đăng xuất");
-        btnLogout.setFont(new Font("Arial", Font.BOLD, 14));
+        btnLogout.setFont(SetFont.heading5);
         btnLogout.setPreferredSize(new Dimension(130, 40));
+        btnLogout.setBackground(SetColor.cam1);
+        btnLogout.setForeground(SetColor.nen);
         rightPanel.add(btnLogout);
 
         headerPanel.add(leftPanel, BorderLayout.WEST);
@@ -109,13 +126,13 @@ public class customerFrame extends JFrame {
         return headerPanel;
     }
 
-    private JPanel createPlaceholderPanel(String text) {
-        JPanel panel = new JPanel(new BorderLayout());
-        JLabel label = new JLabel(text, JLabel.CENTER);
-        label.setFont(new Font("Arial", Font.BOLD, 24));
-        panel.add(label, BorderLayout.CENTER);
-        return panel;
-    }
+//    private JPanel createPlaceholderPanel(String text) {
+//        JPanel panel = new JPanel(new BorderLayout());
+//        JLabel label = new JLabel(text, JLabel.CENTER);
+//        label.setFont(new Font("Arial", Font.BOLD, 24));
+//        panel.add(label, BorderLayout.CENTER);
+//        return panel;
+//    }
 
     private void initEvents() {
         sidebarPanel.getBtnHome().addActionListener(e -> goHome());

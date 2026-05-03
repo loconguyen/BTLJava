@@ -2,15 +2,15 @@ package presentation_layer.mdl;
 
 import javax.swing.*;
 import java.awt.*;
-
+// sua lai tieu de 
 public class RatioSplitPanel extends JPanel {
 
     public RatioSplitPanel(JPanel mainPanel, JPanel sidePanel) {
         setLayout(new BorderLayout());
 
         // Thêm viền cho 2 panel
-        mainPanel.setBorder(BorderFactory.createTitledBorder("main"));
-        sidePanel.setBorder(BorderFactory.createTitledBorder("side"));
+        mainPanel.setBorder(BorderFactory.createTitledBorder(""));
+        sidePanel.setBorder(BorderFactory.createTitledBorder(""));
 
         // JSplitPane chia ngang
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainPanel, sidePanel);

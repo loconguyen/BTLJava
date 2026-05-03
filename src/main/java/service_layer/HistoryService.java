@@ -11,4 +11,7 @@ public class HistoryService {
     public List<OrderHistoryItem> getDeliveredOrdersByCustomer(String customerID) {
         return repository.getOrdersByCustomer(customerID);
     }
+    public List<OrderHistoryItem> getOrdersByCustomer(String customerID) {
+        return repository.getOrdersByCustomer(customerID);
+    }
 }

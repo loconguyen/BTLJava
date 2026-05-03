@@ -1,5 +1,6 @@
 package presentation_layer.mdl;
 
+import presentation_layer.Style.SetFont;
 import presentation_layer.Style.StyledButton;
 import presentation_layer.itf.SidebarCallback;
 
@@ -26,7 +27,8 @@ public class SideBarr extends JPanel {
 
     private JButton createMenuButton(String text) {
         StyledButton button = new StyledButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 16));
+        button.setFont(SetFont.heading5);
+       
         button.setFocusPainted(false);
         return button;
     }

@@ -161,8 +161,8 @@ public class ProductRepository {
     }
 
     public String generateNextProductID() {
-        //String sql = "SELECT TOP 1 productID FROM Product ORDER BY productID DESC";
-        String sql = "SELECT productID FROM Product ORDER BY productID DESC LIMIT 1;";
+        String sql = "SELECT TOP 1 productID FROM Product ORDER BY productID DESC";
+      //  String sql = "SELECT productID FROM Product ORDER BY productID DESC LIMIT 1;";
 
 
         try (Connection conn = DBconnection.openConnection();
@@ -297,28 +297,37 @@ public class ProductRepository {
         return list;
     }
 
-    public boolean updateProductUnitInStock(String productId) {
+    public boolean updateProductUnitInStock(String orderID) {
+        String checkSql = "SELECT COUNT(*) AS cmp " +
+                "FROM order_detail od " +
+                "JOIN Product p ON od.productID = p.productID " +
+                "WHERE od.orderID = ? AND p.unitInStock < od.quantity";
         String sql = "UPDATE Product p " +
                 "JOIN order_detail od ON p.productID = od.productID " +
                 "JOIN orders o ON o.orderID = od.orderID " +
                 "SET p.unitInStock = p.unitInStock - od.quantity " +
-                "WHERE o.status = 'CONFIRMED'";
-
-        if (productId != null) {
-            sql += " AND p.productID = ?";
-        }
+                "WHERE o.orderID = ? ";
 
         try (Connection con = DBconnection.openConnection();
-            PreparedStatement ps = con.prepareStatement(sql)) {
-            if (productId != null) {
-                ps.setString(1, productId);
+            PreparedStatement checkPS = con.prepareStatement(checkSql)) {
+            checkPS.setString(1, orderID);
+            ResultSet rs = checkPS.executeQuery();
+            if (rs.next()) {
+                int soSPThieuHang = rs.getInt("cmp");
+                if (soSPThieuHang > 0) {
+                    return false;
+                }
             }
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            try (PreparedStatement updatePS = con.prepareStatement(sql)) {
+                updatePS.setString(1, orderID);
+                int rowsAffected = updatePS.executeUpdate();
+                return rowsAffected > 0;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
 
         }
         return false;
     }
+
 }

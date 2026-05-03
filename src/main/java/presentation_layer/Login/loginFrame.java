@@ -4,6 +4,9 @@ import model_layer.account;
 import presentation_layer.Customer.customerFrame;
 import presentation_layer.Shipper.shipperFrame;
 import presentation_layer.Shop.shopFrame;
+import presentation_layer.Style.SetColor;
+import presentation_layer.Style.SetFont;
+import presentation_layer.Style.StyledButton;
 import service_layer.AuthService;
 
 import javax.swing.*;
@@ -16,7 +19,6 @@ public class loginFrame extends JFrame {
     private JComboBox<String> cbRole;
     private JButton btnLogin;
     private JButton btnRegister;
-    private JButton btnForgot;
 
     private AuthService authService;
 
@@ -27,183 +29,188 @@ public class loginFrame extends JFrame {
 
     private void initUI() {
         setTitle("Login");
-        setSize(1000, 600);
+        setSize(600, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        // Panel nền chính
         JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(new Color(62, 67, 157));
+        mainPanel.setBackground(SetColor.xanh1);
         add(mainPanel);
 
-        // Card form ở giữa
-        JPanel formPanel = new JPanel();
-        formPanel.setPreferredSize(new Dimension(700, 470));
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setPreferredSize(new Dimension(500, 500));
         formPanel.setBackground(Color.WHITE);
-        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.setBorder(new EmptyBorder(25, 30, 25, 30));
+        formPanel.setBorder(new EmptyBorder(15, 30, 15, 30));
 
-        // Tiêu đề
-        JLabel lblTitle = new JLabel("LOGIN", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 30));
-        lblTitle.setForeground(new Color(40, 60, 90));
-        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel lblSubTitle = new JLabel("Đăng nhập vào hệ thống", SwingConstants.CENTER);
-        lblSubTitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        lblSubTitle.setForeground(new Color(120, 120, 120));
-        lblSubTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        int y = 0;
 
-        formPanel.add(lblTitle);
-        formPanel.add(Box.createVerticalStrut(8));
-        formPanel.add(lblSubTitle);
-        formPanel.add(Box.createVerticalStrut(30));
+        JLabel lblTitle = new JLabel("ĐĂNG NHẬP", SwingConstants.CENTER);
+        lblTitle.setFont(SetFont.heading1);
+        lblTitle.setForeground(SetColor.den);
 
-        // Username
-        JLabel lblUsername = createLabel("USERNAME");
+        gbc.gridy = y++;
+        gbc.insets = new Insets(0, 0, 20, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+        formPanel.add(lblTitle, gbc);
+
+        JLabel lblUsername = createLabel("Tên đăng nhập");
         txtUsername = createTextField();
 
-        // Password
-        JLabel lblPassword = createLabel("PASSWORD");
+        gbc.gridy = y++;
+        gbc.insets = new Insets(0, 0, 6, 0);
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(lblUsername, gbc);
+
+        gbc.gridy = y++;
+        gbc.insets = new Insets(0, 0, 20, 0);
+        formPanel.add(txtUsername, gbc);
+
+        JLabel lblPassword = createLabel("Mật khẩu");
         txtPassword = createPasswordField();
 
-        // Role
-        JLabel lblRole = createLabel("ROLE");
-        cbRole = new JComboBox<>(new String[]{"CUSTOMER", "SHOP", "SHIPPER"});
-        cbRole.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        cbRole.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-        cbRole.setPreferredSize(new Dimension(300, 40));
+        gbc.gridy = y++;
+        gbc.insets = new Insets(0, 0, 6, 0);
+        formPanel.add(lblPassword, gbc);
+
+        gbc.gridy = y++;
+        gbc.insets = new Insets(0, 0, 20, 0);
+        formPanel.add(txtPassword, gbc);
+
+        JLabel lblRole = createLabel("Bạn là");
+        cbRole = new JComboBox<>(new String[]{"Khách hàng", "Chủ shop", "Shipper"});
+        cbRole.setFont(SetFont.normal);
+        cbRole.setPreferredSize(new Dimension(300, 35));
         cbRole.setBackground(Color.WHITE);
 
-        formPanel.add(lblUsername);
-        formPanel.add(Box.createVerticalStrut(6));
-        formPanel.add(txtUsername);
-        formPanel.add(Box.createVerticalStrut(18));
+        gbc.gridy = y++;
+        gbc.insets = new Insets(0, 0, 6, 0);
+        formPanel.add(lblRole, gbc);
 
-        formPanel.add(lblPassword);
-        formPanel.add(Box.createVerticalStrut(6));
-        formPanel.add(txtPassword);
-        formPanel.add(Box.createVerticalStrut(18));
+        gbc.gridy = y++;
+        gbc.insets = new Insets(0, 0, 25, 0);
+        formPanel.add(cbRole, gbc);
 
-        formPanel.add(lblRole);
-        formPanel.add(Box.createVerticalStrut(6));
-        formPanel.add(cbRole);
-        formPanel.add(Box.createVerticalStrut(25));
-
-        // Panel nút phụ
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         actionPanel.setBackground(Color.WHITE);
 
-        btnForgot = new JButton("Quên mật khẩu");
-        styleSecondaryButton(btnForgot);
-
+        JLabel textConfirm = new JLabel("Bạn chưa có tài khoản?");
+        textConfirm.setFont(SetFont.normal);
         btnRegister = new JButton("Đăng ký");
-        styleSecondaryButton(btnRegister);
+        StyledButton.Button3(btnRegister);
 
-        actionPanel.add(btnForgot);
+        actionPanel.add(textConfirm);
         actionPanel.add(btnRegister);
 
-        formPanel.add(actionPanel);
-        formPanel.add(Box.createVerticalStrut(30));
+        gbc.gridy = y++;
+        gbc.insets = new Insets(0, 0, 30, 0);
+        formPanel.add(actionPanel, gbc);
 
-        // Nút login
-        btnLogin = new JButton("LOGIN");
-        btnLogin.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        btnLogin.setBackground(new Color(52, 104, 192));
+        btnLogin = new JButton("Đăng nhập");
+        btnLogin.setFont(SetFont.heading3);
+        btnLogin.setBackground(SetColor.xanh1);
         btnLogin.setForeground(Color.WHITE);
         btnLogin.setFocusPainted(false);
         btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnLogin.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        btnLogin.setPreferredSize(new Dimension(170, 45));
 
-        formPanel.add(btnLogin);
+        gbc.gridy = y++;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        formPanel.add(btnLogin, gbc);
 
         mainPanel.add(formPanel);
 
-        // Sự kiện
         btnLogin.addActionListener(e -> handleLogin());
 
         btnRegister.addActionListener(e -> {
             new RegisterChooseRoleFrame().setVisible(true);
             dispose();
         });
-
-        btnForgot.addActionListener(e ->
-                JOptionPane.showMessageDialog(this, "Chức năng quên mật khẩu sẽ phát triển sau")
-        );
     }
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        label.setForeground(new Color(70, 70, 70));
-        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        label.setFont(SetFont.heading4);
+        label.setForeground(SetColor.den);
+        label.setHorizontalAlignment(SwingConstants.LEFT);
         return label;
     }
 
     private JTextField createTextField() {
         JTextField textField = new JTextField();
-        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-        textField.setPreferredSize(new Dimension(300, 40));
+        textField.setFont(SetFont.normal);
+        textField.setPreferredSize(new Dimension(300, 35));
         return textField;
     }
 
     private JPasswordField createPasswordField() {
         JPasswordField passwordField = new JPasswordField();
-        passwordField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        passwordField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-        passwordField.setPreferredSize(new Dimension(300, 40));
+        passwordField.setFont(SetFont.normal);
+        passwordField.setPreferredSize(new Dimension(300, 35));
         return passwordField;
-    }
-
-    private void styleSecondaryButton(JButton button) {
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        button.setBackground(new Color(245, 245, 245));
-        button.setForeground(new Color(60, 60, 60));
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     private void handleLogin() {
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword()).trim();
-        String role = cbRole.getSelectedItem().toString();
+        String roleUI = cbRole.getSelectedItem().toString();
+        String role = "";
+
+        switch (roleUI) {
+            case "Khách hàng":
+                role = "CUSTOMER";
+                break;
+            case "Chủ shop":
+                role = "SHOP";
+                break;
+            case "Shipper":
+                role = "SHIPPER";
+                break;
+            default:
+                role = "";
+        }
+    
 
         if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ username và password");
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin");
             return;
         }
-
         account acc = authService.login(username, password, role);
 
         if (acc == null) {
-            JOptionPane.showMessageDialog(this, "Sai username, password hoặc role");
+            JOptionPane.showMessageDialog(this, "Nhập sai thông tin");
             return;
         }
 
-        JOptionPane.showMessageDialog(this, "Đăng nhập thành công với role: " + acc.getRole());
+        JOptionPane.showMessageDialog(this, "Đăng nhập thành công ");
 
-        switch (acc.getRole().toUpperCase()) {
+         switch (role) {
             case "CUSTOMER":
                 new customerFrame(acc.getUsername(), acc.getCustomerID()).setVisible(true);
                 break;
+
             case "SHOP":
                 new shopFrame(acc.getUsername(), acc.getShopID()).setVisible(true);
                 break;
+
             case "SHIPPER":
-                new shipperFrame(acc.getUsername(), acc.getShopID()).setVisible(true);
+                new shipperFrame(acc.getUsername(), acc.getShipperID()).setVisible(true);
                 break;
+
             default:
-                JOptionPane.showMessageDialog(this, "Role không hợp lệ");
+                JOptionPane.showMessageDialog(this, "Sai thông tin");
                 return;
         }
 
         dispose();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new loginFrame().setVisible(true));
-    }
+    
 }

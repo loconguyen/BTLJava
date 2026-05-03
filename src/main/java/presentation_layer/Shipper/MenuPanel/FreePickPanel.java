@@ -1,6 +1,8 @@
 package presentation_layer.Shipper.MenuPanel;
 
 import model_layer.order;
+import presentation_layer.Style.StyledButton;
+import presentation_layer.Style.StyledTable;
 import presentation_layer.mdl.RatioSplitPanel;
 import repository_layer.OrderReponsitory;
 
@@ -16,7 +18,7 @@ public class FreePickPanel extends JPanel {
     public String id;
 
     DefaultTableModel model;
-    JTable table;
+    StyledTable table;
 
     public FreePickPanel(String id) {
         this.id = id;
@@ -39,10 +41,11 @@ public class FreePickPanel extends JPanel {
     }
 
     public void initTable(JPanel tablePanel) {
+        tablePanel.removeAll();
         OrderReponsitory orderRepo = new OrderReponsitory();
-        List<order> orderList = orderRepo.getOrdersWithProducts("CONFIRMED", null);
+        List<order> orderList = orderRepo.getOrdersWithProductsForShipper("CONFIRMED", null);
 
-        String[] columnNames = {"orderID", "CustomerID", "shipperID", "orderDate", "AddressID"};
+        String[] columnNames = {"Mã đơn", "Mã khách hàng", "Mã shipper", "Ngày đặt", "Mã địa chỉ"};
 
         Object[][] data = new Object[orderList.size()][5];
 
@@ -56,7 +59,7 @@ public class FreePickPanel extends JPanel {
         }
 
         model = new DefaultTableModel(data, columnNames);
-        table = new JTable(model);
+        table = new StyledTable(model);
 
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -66,10 +69,13 @@ public class FreePickPanel extends JPanel {
                 o -> o.getOrderID(),
                 o -> showOrderDetailForShipper(o, table, model, this.id, this, "SHIPPING")
         );
+        tablePanel.revalidate();
+        tablePanel.repaint();
     }
 
     public void initControl(JPanel sidePanel, JPanel tablePanel) {
-        JButton btnRefesh = new JButton("Refresh");
+        JButton btnRefesh = new JButton("Làm mới");
+        StyledButton.button4(btnRefesh);
 
         JPanel controlPanel = new JPanel(new GridLayout(3, 1, 10, 10));
 
@@ -79,9 +85,15 @@ public class FreePickPanel extends JPanel {
 
 
         btnRefesh.addActionListener(e -> {
-            model.setRowCount(0);
             initTable(tablePanel);
-            table.repaint();
         });
+    }
+
+    public JTable getTable() {
+        return table;
+    }
+
+    public DefaultTableModel getModel() {
+        return model;
     }
 }

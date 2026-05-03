@@ -40,7 +40,9 @@ public class shipperFrame extends JFrame implements SidebarCallback {
     private OrdersPanel ordersPanel;
     private WorkPerPanel workPerPanel;
 
-    private AccountPanel accountPanel = new AccountPanel(id);
+    private AccountPanel accountPanel ;
+
+    private HeaderPanel header;
 
     public shipperFrame(String un, String id) {
         this.id = id;
@@ -49,16 +51,17 @@ public class shipperFrame extends JFrame implements SidebarCallback {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        sb = new SideBarr(new String[]{"Orders", "FreePick", "WorkPerformance", "Account"}, this);
+        sb = new SideBarr(new String[]{"Đơn hàng", "Lấy hàng", "Hiệu suất", "Tài khoản"}, this);
         mainPanel.add(sb, BorderLayout.WEST);
-
-        JPanel header = new HeaderPanel(un);
-        mainPanel.add(header, BorderLayout.NORTH);
-
 
         ordersPanel = new OrdersPanel(id);
         freePickPanel = new FreePickPanel(id);
         workPerPanel = new WorkPerPanel(id);
+        accountPanel = new AccountPanel(id);
+
+
+        header = new HeaderPanel(un, ordersPanel.getTable(), ordersPanel.getModel());
+        mainPanel.add(header, BorderLayout.NORTH);
 
         content.add(ordersPanel, BorderLayout.CENTER);
         mainPanel.add(content, BorderLayout.CENTER);
@@ -72,16 +75,19 @@ public class shipperFrame extends JFrame implements SidebarCallback {
         content.removeAll();
 
         switch (cmd) {
-            case "Orders":
+            case "Đơn hàng":
                 content.add(ordersPanel, BorderLayout.CENTER);
+                header.setTarget(ordersPanel.getTable(), ordersPanel.getModel());
                 break;
-            case "FreePick":
+            case "Lấy hàng":
                 content.add(freePickPanel, BorderLayout.CENTER);
+                header.setTarget(freePickPanel.getTable(), freePickPanel.getModel());
                 break;
-            case "WorkPerformance":
+            case "Hiệu suất":
                 content.add(workPerPanel, BorderLayout.CENTER);
+                header.setTarget(workPerPanel.getTable(), workPerPanel.getModel());
                 break;
-            case "Account":
+            case "Tài khoản":
                 content.add(accountPanel, BorderLayout.CENTER);
                 break;
         }
@@ -90,9 +96,9 @@ public class shipperFrame extends JFrame implements SidebarCallback {
         content.repaint();
     }
 
-    public static void main(String[] args) {
-        new shipperFrame("Shipper Owner", "SH003").setVisible(true);
-    }
+//    public static void main(String[] args) {
+//        new shipperFrame("Shipper Owner", "SH003").setVisible(true);
+//    }
 
    
 }

@@ -2,6 +2,8 @@ package presentation_layer.Customer;
 
 import model_layer.category;
 import model_layer.products;
+import presentation_layer.Style.SetColor;
+import presentation_layer.Style.SetFont;
 import service_layer.CategoryService;
 import service_layer.ProductService;
 
@@ -41,21 +43,26 @@ public class ProductListPanel extends JPanel {
 
         JPanel topPanel = new JPanel(new BorderLayout(10, 10));
         topPanel.setOpaque(false);
+        topPanel.setBackground(SetColor.xanh1);
 
         JLabel lblTitle = new JLabel("DANH SÁCH SẢN PHẨM", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        lblTitle.setFont(SetFont.heading1);
 
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         filterPanel.setOpaque(false);
 
-        JLabel lblCategory = new JLabel("Lọc theo danh mục:");
-        lblCategory.setFont(new Font("Arial", Font.BOLD, 15));
+        JLabel lblCategory = new JLabel("Danh mục sản phẩm:");
+        lblCategory.setFont(SetFont.heading5);
 
         cbCategory = new JComboBox<>();
         cbCategory.setPreferredSize(new Dimension(220, 32));
+        cbCategory.setBackground(SetColor.xanh3);
+        cbCategory.setForeground(SetColor.den);
 
         btnFilterCategory = new JButton("Lọc");
         btnFilterCategory.setFont(new Font("Arial", Font.BOLD, 13));
+        btnFilterCategory.setBackground(SetColor.cam1);
+        btnFilterCategory.setForeground(SetColor.nen);
 
         filterPanel.add(lblCategory);
         filterPanel.add(cbCategory);
@@ -66,11 +73,11 @@ public class ProductListPanel extends JPanel {
 // chua toan bo khoi san pham chinh cai nay
         productContainer = new JPanel();
         productContainer.setLayout(new GridLayout(0, 5, 10, 10));
-        productContainer.setBackground(new Color(245, 245, 245));
+        productContainer.setBackground(SetColor.cam2);
         productContainer.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JPanel wrapperPanel = new JPanel(new BorderLayout());
-        wrapperPanel.setBackground(new Color(245, 245, 245));
+        wrapperPanel.setBackground(Color.white);
         wrapperPanel.add(productContainer, BorderLayout.NORTH);
 
         JScrollPane scrollPane = new JScrollPane(wrapperPanel);
@@ -103,7 +110,7 @@ public class ProductListPanel extends JPanel {
             renderProducts(productList);
         }
     }
-
+// category loc
     private void loadCategories() {
         cbCategory.removeAllItems();
 
@@ -180,40 +187,43 @@ public class ProductListPanel extends JPanel {
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBackground(Color.WHITE);
         infoPanel.setBorder(new EmptyBorder(8, 8, 8, 8));
-
+// lay ten san pham tu bang
         JLabel lblName = new JLabel(p.getName());
-        lblName.setFont(new Font("Arial", Font.BOLD, 13));
+        lblName.setFont(SetFont.heading5);
+        lblName.setForeground(SetColor.xanh1);
         lblName.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblName.setHorizontalAlignment(SwingConstants.LEFT);
 
         JLabel lblStock = new JLabel("Tồn kho: " + p.getUnitInStock());
-        lblStock.setFont(new Font("Arial", Font.PLAIN, 13));
+        lblStock.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         lblStock.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblStock.setHorizontalAlignment(SwingConstants.LEFT);
 
         JLabel lblQuantityPerUnit = new JLabel("Đơn vị: " + p.getQuantityPerUnit());
-        lblQuantityPerUnit.setFont(new Font("Arial", Font.PLAIN, 13));
+        lblQuantityPerUnit.setFont(new Font("Segeo UI", Font.PLAIN, 13));
         lblQuantityPerUnit.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblQuantityPerUnit.setHorizontalAlignment(SwingConstants.LEFT);
 
         String priceText;
         if (p.getUnitPrice() == 0) {
-            priceText = "Giá: Chưa có giá";
+            priceText = "Giá: Chưa cập nhập";
         } else {
             java.text.DecimalFormat df = new java.text.DecimalFormat("#,###");
             priceText = "Giá: " + df.format(p.getUnitPrice()) + " VNĐ";
         }
 
         JLabel lblPrice = new JLabel(priceText);
-        lblPrice.setFont(new Font("Arial", Font.BOLD, 13));
-        lblPrice.setForeground(new Color(220, 30, 30));
+        lblPrice.setFont(new Font("Segeo UI", Font.BOLD, 13));
+        lblPrice.setForeground(SetColor.cam1);
         lblPrice.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblPrice.setHorizontalAlignment(SwingConstants.LEFT);
 
         JButton btnAdd = new JButton("Thêm");
-        btnAdd.setFont(new Font("Arial", Font.BOLD, 13));
+        btnAdd.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnAdd.setFocusPainted(false);
         btnAdd.setPreferredSize(new Dimension(90, 30));
+        btnAdd.setBackground(SetColor.cam1);
+        btnAdd.setForeground(Color.white);
 
         btnAdd.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Đã chọn sản phẩm: " + p.getName());

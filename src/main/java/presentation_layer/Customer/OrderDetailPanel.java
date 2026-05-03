@@ -3,6 +3,8 @@ package presentation_layer.Customer;
 import model_layer.CartItem;
 import model_layer.addressCustomer;
 import model_layer.methodPayment;
+import presentation_layer.Style.SetColor;
+import presentation_layer.Style.SetFont;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,11 +14,11 @@ import java.util.List;
 
 public class OrderDetailPanel extends JPanel {
 
-    private final Font FONT_TITLE = new Font("Arial", Font.BOLD, 28);
-    private final Font FONT_BOLD_15 = new Font("Arial", Font.BOLD, 15);
-    private final Font FONT_PLAIN_14 = new Font("Arial", Font.PLAIN, 14);
-    private final Font FONT_PLAIN_13 = new Font("Arial", Font.PLAIN, 13);
-    private final Font FONT_BOLD_13 = new Font("Arial", Font.BOLD, 13);
+//    private final Font FONT_TITLE = new Font("Arial", Font.BOLD, 28);
+//    private final Font FONT_BOLD_15 = new Font("Arial", Font.BOLD, 15);
+//    private final Font FONT_PLAIN_14 = new Font("Arial", Font.PLAIN, 14);
+//    private final Font FONT_PLAIN_13 = new Font("Arial", Font.PLAIN, 13);
+//    private final Font FONT_BOLD_13 = new Font("Arial", Font.BOLD, 13);
 
     private final JLabel lblSelectedShop;
     private final JPanel billListPanel;
@@ -38,12 +40,12 @@ public class OrderDetailPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(12, 8, 12, 8));
 
-        JLabel lblTitle = new JLabel("order detail");
-        lblTitle.setFont(FONT_TITLE);
+        JLabel lblTitle = new JLabel("Giỏ hàng");
+        lblTitle.setFont(SetFont.heading2);
         lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         lblSelectedShop = new JLabel("Chưa chọn shop");
-        lblSelectedShop.setFont(FONT_PLAIN_14);
+        lblSelectedShop.setFont(SetFont.heading5);
         lblSelectedShop.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel billHeader = createBillHeader();
@@ -65,40 +67,47 @@ public class OrderDetailPanel extends JPanel {
         billScroll.getVerticalScrollBar().setUnitIncrement(16);
 
         JLabel lblTotalTitle = new JLabel("Tổng số tiền");
-        lblTotalTitle.setFont(FONT_PLAIN_14);
+        lblTotalTitle.setFont(SetFont.heading5);
+        lblTotalTitle.setForeground(SetColor.den);
         lblTotalTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
-
+// bi chồng 1 cái j đó lên
         lblTotalAmount = new JLabel("0 VND");
-        lblTotalAmount.setFont(new Font("Arial", Font.BOLD, 24));
-        lblTotalAmount.setForeground(new Color(220, 38, 38));
+        lblTotalAmount.setFont(SetFont.heading5);
+        lblTotalAmount.setForeground(SetColor.xanh1);
         lblTotalAmount.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblPayment = new JLabel("Phương thức thanh toán");
-        lblPayment.setFont(FONT_BOLD_15);
+        lblPayment.setFont(SetFont.heading5);
         lblPayment.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         cbPaymentMethod = new JComboBox<>();
-        cbPaymentMethod.setFont(FONT_PLAIN_13);
+        cbPaymentMethod.setFont(new Font("Segoe UI",Font.BOLD, 13));;;
         cbPaymentMethod.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         cbPaymentMethod.setAlignmentX(Component.LEFT_ALIGNMENT);
         cbPaymentMethod.setEnabled(false);
 
         JLabel lblAddress = new JLabel("Địa chỉ nhận hàng");
-        lblAddress.setFont(FONT_BOLD_15);
+        lblAddress.setFont(new Font("Segoe UI",Font.BOLD, 13));
         lblAddress.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         cbAddress = new JComboBox<>();
-        cbAddress.setFont(FONT_PLAIN_13);
+        cbAddress.setFont(SetFont.normal);
         cbAddress.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         cbAddress.setAlignmentX(Component.LEFT_ALIGNMENT);
         cbAddress.setEnabled(false);
-
+// check
         btnPlaceOrder = new JButton("Đặt hàng");
-        btnPlaceOrder.setFont(FONT_BOLD_15);
+        btnPlaceOrder.setFont(SetFont.heading5);
+        btnPlaceOrder.setBackground(SetColor.cam1);
+        btnPlaceOrder.setForeground(Color.white);
         btnPlaceOrder.setFocusPainted(false);
         btnPlaceOrder.setAlignmentX(Component.LEFT_ALIGNMENT);
         btnPlaceOrder.setMaximumSize(new Dimension(220, 44));
         btnPlaceOrder.setEnabled(false);
+        btnPlaceOrder.setOpaque(true);
+        btnPlaceOrder.setContentAreaFilled(true);
+        btnPlaceOrder.setBorderPainted(false);
+        
 
         cbPaymentMethod.addActionListener(e -> updatePlaceOrderButtonState());
         cbAddress.addActionListener(e -> updatePlaceOrderButtonState());
@@ -137,13 +146,13 @@ wrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
 wrapper.setBorder(new EmptyBorder(0, 0, 0, 0));
 
 JSeparator line = new JSeparator();
-line.setForeground(new Color(210, 220, 235));
-line.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+line.setForeground(SetColor.nen);// check
+line.setMaximumSize(new Dimension(Integer.MAX_VALUE, 4));
 line.setAlignmentX(Component.LEFT_ALIGNMENT);
-
+// part2 của panel orderdetail
 JPanel card = new JPanel();
 card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-card.setBackground(new Color(248, 250, 252));
+card.setBackground(Color.white);//check
 card.setAlignmentX(Component.LEFT_ALIGNMENT);
 card.setBorder(BorderFactory.createCompoundBorder(
 BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
@@ -151,16 +160,16 @@ new EmptyBorder(14, 14, 14, 14)
 ));
 card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 260));
 
-lblTotalTitle.setFont(new Font("Arial", Font.PLAIN, 14));
-lblTotalTitle.setForeground(new Color(80, 80, 80));
+lblTotalTitle.setFont(SetFont.heading5);
+lblTotalTitle.setForeground(SetColor.xanh1);
 lblTotalTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-lblTotalAmount.setFont(new Font("Arial", Font.BOLD, 18));
-lblTotalAmount.setForeground(new Color(220, 38, 38));
+lblTotalAmount.setFont(SetFont.heading5);
+lblTotalAmount.setForeground(SetColor.cam1);
 lblTotalAmount.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-lblPayment.setFont(new Font("Arial", Font.BOLD, 13));
-lblPayment.setForeground(new Color(30, 41, 59));
+lblPayment.setFont(new Font("Segoe UI", Font.BOLD, 13));
+lblPayment.setForeground(SetColor.den);
 lblPayment.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 lblAddress.setFont(new Font("Arial", Font.BOLD, 13));
@@ -179,9 +188,7 @@ cbAddress.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
 cbAddress.setPreferredSize(new Dimension(0, 36));
 cbAddress.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-btnPlaceOrder.setFont(new Font("Arial", Font.BOLD, 14));
-btnPlaceOrder.setBackground(new Color(37, 99, 235));
-btnPlaceOrder.setForeground(Color.WHITE);
+
 btnPlaceOrder.setFocusPainted(false);
 btnPlaceOrder.setBorder(BorderFactory.createEmptyBorder(10, 16, 10, 16));
 btnPlaceOrder.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -240,7 +247,7 @@ return wrapper;
 
 	    // TÊN SẢN PHẨM (xuống dòng tự nhiên)
 	    JTextArea txtName = new JTextArea(item.getProduct().getName());
-	    txtName.setFont(FONT_BOLD_13);
+	    txtName.setFont(SetFont.normal);
 	    txtName.setLineWrap(true);
 	    txtName.setWrapStyleWord(true);
 	    txtName.setEditable(false);
@@ -253,6 +260,7 @@ return wrapper;
 	    JPanel infoRow = new JPanel(new GridLayout(1, 3, 10, 0));
 	    infoRow.setOpaque(false);
 	    infoRow.setAlignmentX(Component.LEFT_ALIGNMENT);
+	    infoRow.setFont(SetFont.normal);
 
 	    infoRow.add(createInfoBlock("SL", String.valueOf(item.getQuantity())));
 	    infoRow.add(createInfoBlock("Đơn giá", formatMoney(item.getProduct().getUnitPrice())));
@@ -270,11 +278,12 @@ return wrapper;
 	    panel.setOpaque(false);
 
 	    JLabel lblTitle = new JLabel(title);
-	    lblTitle.setFont(FONT_PLAIN_13);
-	    lblTitle.setForeground(Color.GRAY);
+	    lblTitle.setFont(SetFont.heading5);
+	    lblTitle.setForeground(SetColor.den);
 
 	    JLabel lblValue = new JLabel(value);
-	    lblValue.setFont(FONT_BOLD_13);
+	    lblValue.setFont(new Font("Segoe UI",Font.BOLD, 13));
+	    lblValue.setForeground(SetColor.den);
 
 	    panel.add(lblTitle);
 	    panel.add(Box.createVerticalStrut(2));
@@ -289,7 +298,7 @@ return wrapper;
 
         JLabel label = new JLabel(html);
         label.setHorizontalAlignment(align);
-        label.setFont(bold ? FONT_BOLD_13 : FONT_PLAIN_13);
+        label.setFont(bold ? SetFont.heading5: SetFont.normal);
 
         Dimension size = new Dimension(width, 40); // tăng height để chứa nhiều dòng
         label.setPreferredSize(size);
@@ -345,13 +354,6 @@ return wrapper;
         lblSelectedShop.setText("Chưa chọn shop");
 
         billListPanel.removeAll();
-        JLabel lblEmpty = new JLabel("Hãy chọn một shop ở danh sách bên trái.");
-        lblEmpty.setFont(FONT_PLAIN_13);
-        lblEmpty.setForeground(Color.GRAY);
-        lblEmpty.setBorder(new EmptyBorder(10, 0, 10, 0));
-        lblEmpty.setAlignmentX(Component.LEFT_ALIGNMENT);
-        billListPanel.add(lblEmpty);
-
         setTotalAmount(0);
 
         billListPanel.revalidate();
@@ -370,7 +372,7 @@ return wrapper;
     public void setTotalAmount(double amount) {
         lblTotalAmount.setText(formatMoney(amount));
     }
-
+// sua hien thi phuong thuc thanh toan
     public void setPaymentMethodData(List<methodPayment> methods) {
         cbPaymentMethod.removeAllItems();
 
@@ -387,7 +389,7 @@ return wrapper;
 
         updatePlaceOrderButtonState();
     }
-
+// sua hien thi dia chi nhan hang
     public void setAddressData(List<addressCustomer> addresses) {
         cbAddress.removeAllItems();
 
@@ -428,7 +430,7 @@ return wrapper;
     public boolean hasBill() {
         return hasBill;
     }
-
+// nut dat hang ( co chua dieu kien dat hàng
     private void updatePlaceOrderButtonState() {
         boolean canPlaceOrder = hasBill
                 && cbPaymentMethod.getItemCount() > 0
@@ -439,11 +441,13 @@ return wrapper;
         btnPlaceOrder.setEnabled(canPlaceOrder);
 
         if (canPlaceOrder) {
-            btnPlaceOrder.setBackground(new Color(37, 99, 235));
+        	// can sua
+            btnPlaceOrder.setBackground(SetColor.cam1);
             btnPlaceOrder.setForeground(Color.WHITE);
         } else {
-            btnPlaceOrder.setBackground(new Color(203, 213, 225));
-            btnPlaceOrder.setForeground(new Color(100, 100, 100));
+        	// can sua
+            btnPlaceOrder.setBackground(SetColor.cam2);
+            btnPlaceOrder.setForeground(Color.white);
         }
     }
 
