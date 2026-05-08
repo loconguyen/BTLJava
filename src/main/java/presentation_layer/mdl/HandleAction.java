@@ -4,10 +4,7 @@ import model_layer.account;
 import model_layer.order;
 import model_layer.order_detail;
 import model_layer.products;
-import presentation_layer.Style.SetColor;
-import presentation_layer.Style.SetFont;
-import presentation_layer.Style.StyledButton;
-import presentation_layer.Style.StyledTable;
+import presentation_layer.Style.*;
 import presentation_layer.itf.HandleActionCallBack;
 import repository_layer.OrderReponsitory;
 import repository_layer.ProductRepository;
@@ -809,17 +806,26 @@ public class HandleAction {
 // can xem lai de khop voi 3 user + login
     public static void handleChangePassword(JPanel mainPanel, account acc) {
         JPanel changePassPanel = new JPanel(new GridBagLayout());
+        changePassPanel.setBackground(Color.WHITE); // nền sáng, sạch sẽ
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JPasswordField txtCurrentPass = new JPasswordField(15);
-        JPasswordField txtNewPass = new JPasswordField(15);
-        JPasswordField txtConfirmPass = new JPasswordField(15);
+        StyledPasswordField txtCurrentPass = new StyledPasswordField();
+        StyledPasswordField txtNewPass = new StyledPasswordField();
+        StyledPasswordField txtConfirmPass = new StyledPasswordField();
+
         JButton btnSave = new JButton("Lưu");
         JButton btnCancel = new JButton("Hủy");
 
+        StyledButton.Button3(btnSave);
+        StyledButton.Button3(btnCancel);
+
+        btnSave.setFocusPainted(false);
+        btnCancel.setFocusPainted(false);
+
+        // Layout
         gbc.gridx = 0; gbc.gridy = 0; changePassPanel.add(new JLabel("Current Password:"), gbc);
         gbc.gridx = 1; changePassPanel.add(txtCurrentPass, gbc);
 
@@ -832,6 +838,7 @@ public class HandleAction {
         gbc.gridy = 3; gbc.gridx = 0; changePassPanel.add(btnCancel, gbc);
         gbc.gridx = 1; changePassPanel.add(btnSave, gbc);
 
+        // Action
         btnSave.addActionListener(e -> {
             String currentPass = new String(txtCurrentPass.getPassword());
             String newPass = new String(txtNewPass.getPassword());
@@ -853,10 +860,86 @@ public class HandleAction {
             }
         });
 
+        btnCancel.addActionListener(e -> {
+            mainPanel.removeAll();
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        });
+
         mainPanel.removeAll();
         mainPanel.add(changePassPanel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();
+    }
+
+    public static void handleChangeInf(account acc, StyledTextField txtName, StyledTextField txtPhone, StyledTextField txtEmail, StyledTextField txtAddress, Component parent) {
+        String newName = txtName.getText().trim();
+        String newPhone = txtPhone.getText().trim();
+        String newEmail = txtEmail.getText().trim();
+        String newAddress = txtAddress.getText().trim();
+
+        // Validate
+        if (newName.isEmpty() || newPhone.isEmpty()) {
+            JOptionPane.showMessageDialog(parent, "Họ tên và Số điện thoại không được để trống!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(parent, "Bạn có chắc chắn muốn lưu các thay đổi này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        accountRepository repo = new accountRepository();
+        boolean success = false;
+
+        if (acc.getShop() != null) {
+            success = repo.updateShopProfile(acc.getShopID(), newName, newPhone, newEmail, newAddress);
+            if (success) {
+                acc.getShop().setName(newName);
+                acc.getShop().setPhone(newPhone);
+                acc.getShop().setEmail(newEmail);
+                acc.getShop().setAddress(newAddress);
+            }
+        } else if (acc.getCustomer() != null) {
+            success = repo.updateCustomerProfile(acc.getCustomerID(), newName, newPhone);
+            if (success) {
+                acc.getCustomer().setName(newName);
+                acc.getCustomer().setPhone(newPhone);
+            }
+        } else if (acc.getShipper() != null) {
+            success = repo.updateShipperProfile(acc.getShipperID(), newName, newPhone, newAddress);
+            if (success) {
+                acc.getShipper().setName(newName);
+                acc.getShipper().setPhone(newPhone);
+                acc.getShipper().setCompanyName(newAddress);
+            }
+        }
+
+        // 4. Hiển thị thông báo
+        if (success) {
+            JOptionPane.showMessageDialog(parent, "Cập nhật hồ sơ thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(parent, "Cập nhật thất bại. Vui lòng thử lại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public static void handleChangeAva(Dimension avatarSize, JPanel avatarPanel){
+        String inputText = JOptionPane.showInputDialog(
+                null,
+                "Vui lòng nhập lý do hủy đơn hàng:",
+                "Nhập thông tin",
+                JOptionPane.QUESTION_MESSAGE
+        );
+        JPanel imgPanel = showImg(inputText);
+        if (imgPanel != null) {
+            imgPanel.setPreferredSize(avatarSize);
+            imgPanel.setMinimumSize(avatarSize);
+            imgPanel.setMaximumSize(avatarSize);
+
+            imgPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            avatarPanel.removeAll();
+            avatarPanel.add(imgPanel);
+        }
     }
 }
 

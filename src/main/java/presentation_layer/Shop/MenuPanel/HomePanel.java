@@ -9,6 +9,7 @@ import model_layer.products;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import static presentation_layer.mdl.HandleAction.*;
@@ -48,6 +49,7 @@ public class HomePanel extends JPanel {
         ProductRepository productRepo = new ProductRepository();
         List<products> productList = productRepo.findByShopID(id);
 
+        DecimalFormat df = new DecimalFormat("#,###");
         String[] columnNames = {"Mã SP", "Mã danh mục", "Tên", "Đơn giá", "Tồn kho", "Đơn vị"};
 
         Object[][] data = new Object[productList.size()][6];
@@ -57,7 +59,8 @@ public class HomePanel extends JPanel {
             data[i][0] = p.getProductID();
             data[i][1] = p.getCatgID();
             data[i][2] = p.getName();
-            data[i][3] = p.getUnitPrice();
+            String pr = df.format(p.getUnitPrice());
+            data[i][3] = pr;
             data[i][4] = p.getUnitInStock();
             data[i][5] = p.getQuantityPerUnit();
         }
@@ -80,7 +83,7 @@ public class HomePanel extends JPanel {
         JButton btnAdd = new JButton("Thêm sản phẩm");
         JButton btnEdit = new JButton("Sửa sản phẩm");
         JButton btnRemove = new JButton("Xóa sản phẩm");
-        JButton btnImEx = new JButton("Xuất// chx hiểu ");
+        JButton btnImEx = new JButton("Nhập Excel");
         StyledButton.button4(btnImEx);
         StyledButton.button4(btnAdd);
         StyledButton.button4(btnEdit);

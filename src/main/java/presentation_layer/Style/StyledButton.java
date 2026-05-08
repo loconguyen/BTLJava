@@ -9,9 +9,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class StyledButton extends JButton {
-//    private Color normalColor = new Color(70, 130, 180); // Màu xanh SteelBlue
-//    private Color hoverColor = new Color(100, 149, 237); // Màu xanh CornflowerBlue
-
     public StyledButton(String text) {
         super(text);
         setContentAreaFilled(false);
@@ -26,11 +23,16 @@ public class StyledButton extends JButton {
 
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) { setBackground(SetColor.xanh2);
-                                                     setForeground(SetColor.den);}
+            public void mouseEntered(MouseEvent e) {
+                setBackground(SetColor.xanh2);
+                setForeground(SetColor.den);
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) { setBackground(SetColor.xanh1);
-                                                    setForeground(Color.white);}
+            public void mouseExited(MouseEvent e) {
+                setBackground(SetColor.xanh1);
+                setForeground(Color.white);
+            }
         });
     }
 
@@ -47,41 +49,62 @@ public class StyledButton extends JButton {
         g2.dispose();
     }
 
-  //button size 100x35
-    // sua lai mau ( cai nay su dung lai o btt them
+    // 1. Nút tiêu chuẩn (Size 100x35) - Dùng cho Lưu, Thêm, Hủy...
     public static final void Button3(JButton button) {
-     button.setFont(SetFont.heading5);
-     button.setBackground(SetColor.cam1);
-     button.setForeground(Color.white);
-     button.setFocusPainted(false);
-     button.setPreferredSize(new DimensionUIResource(100, 35));
-     button.setCursor(new Cursor(Cursor.HAND_CURSOR));// khi dua chuot vao con tro-> ban tay
-     button.addMouseListener(new java.awt.event.MouseAdapter() {
-    public void mouseEntered(java.awt.event.MouseEvent evt) {
-        button.setBackground(SetColor.cam2); // khi hover
-        button.setForeground(SetColor.nen);
-    }
-
-    public void mouseExited(java.awt.event.MouseEvent evt) {
-        button.setBackground(SetColor.cam1); // khi rời chuột
+        button.setFont(SetFont.heading5);
+        button.setBackground(SetColor.cam1);
         button.setForeground(Color.white);
-    }
-});
- }
-  //button size 150x50
-    public static final void Button2(JButton button) {
-     button.setFont(SetFont.heading4);
-     button.setBackground(SetColor.cam1);
-     button.setForeground(Color.white);
-     button.setFocusPainted(false);
-     button.setPreferredSize(new DimensionUIResource(100, 35));
-     button.setCursor(new Cursor(Cursor.HAND_CURSOR));// khi dua chuot vao con tro-> ban tay
+        button.setPreferredSize(new Dimension(100, 35));
 
- }
-    // nut them san pham ....
+        applyModernStyle(button); // Gọi hàm style chung
+        addHoverEffect(button, SetColor.cam1, SetColor.cam2, Color.white, SetColor.nen);
+    }
+
+    // 2. Nút to (Size 150x50) - Dùng cho các thao tác chính nổi bật
+    public static final void Button2(JButton button) {
+        button.setFont(SetFont.heading4);
+        button.setBackground(SetColor.cam1);
+        button.setForeground(Color.white);
+        button.setPreferredSize(new Dimension(150, 50));
+
+        applyModernStyle(button);
+        addHoverEffect(button, SetColor.cam1, SetColor.cam2, Color.white, SetColor.nen);
+    }
+
+    // 3. Nút chức năng (Thêm sản phẩm...) - Size tự động dãn theo chữ hoặc icon
     public static final void button4(JButton button) {
-    	button.setFont(SetFont.heading4);
-    	button.setBackground(SetColor.cam1);
-    	button.setForeground(Color.white);
+        button.setFont(SetFont.heading4);
+        button.setBackground(SetColor.cam1);
+        button.setForeground(Color.white);
+
+        // Thêm padding cho nút rộng rãi, đẹp hơn (Trên: 8, Trái: 20, Dưới: 8, Phải: 20)
+        button.setBorder(new EmptyBorder(8, 20, 8, 20));
+
+        applyModernStyle(button);
+        addHoverEffect(button, SetColor.cam1, SetColor.cam2, Color.white, SetColor.nen);
+    }
+
+    private static void applyModernStyle(JButton button) {
+        button.setFocusPainted(false);   // Xóa khung vuông đứt nét khi click
+        button.setBorderPainted(false);  // Xóa viền 3D mặc định của Swing
+        button.setOpaque(true);          // Đảm bảo màu nền được tô đầy
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Trỏ chuột hình bàn tay
+    }
+
+
+    private static void addHoverEffect(JButton button, Color bgNormal, Color bgHover, Color fgNormal, Color fgHover) {
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent evt) {
+                button.setBackground(bgHover);
+                button.setForeground(fgHover);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent evt) {
+                button.setBackground(bgNormal);
+                button.setForeground(fgNormal);
+            }
+        });
     }
 }

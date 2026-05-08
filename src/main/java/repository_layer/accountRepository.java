@@ -2,6 +2,9 @@ package repository_layer;
 
 import config.DBconnection;
 import model_layer.account;
+import model_layer.customer;
+import model_layer.shipper;
+import model_layer.shop;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -145,7 +148,7 @@ public class accountRepository {
     }
 
     public account getInfo(String roleID) {
-        String sql = "SELECT * FROM Account WHERE customerID = ? or shopID = ? or shipperID = ?";
+        String sql = "SELECT * FROM account WHERE customerID = ? OR shopID = ? OR shipperID = ?";
 
         try (Connection conn = DBconnection.openConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -161,15 +164,59 @@ public class accountRepository {
                 acc.setUsername(rs.getString("username"));
                 acc.setPassword(rs.getString("password"));
                 acc.setRole(rs.getString("role"));
+
                 acc.setCustomerID(rs.getString("customerID"));
                 acc.setShopID(rs.getString("shopID"));
                 acc.setShipperID(rs.getString("shipperID"));
+
                 if (acc.getCustomerID() != null) {
                     acc.setRoleID(acc.getCustomerID());
-                } else if (acc.getShopID() != null) {
+                    String sqlCustomer = "SELECT * FROM customer WHERE customerID = ?";
+
+                    try (PreparedStatement psRole = conn.prepareStatement(sqlCustomer)) {
+                        psRole.setString(1, acc.getCustomerID());
+                        ResultSet rsRole = psRole.executeQuery();
+                        acc.setCustomer(new customer());
+                        if (rsRole.next()) {
+                            acc.getCustomer().setName(rsRole.getString("name"));
+                            acc.getCustomer().setPhone(rsRole.getString("phone"));
+                            acc.getCustomer().setGender("1".equals(rsRole.getString("gender")) ? "Nam" : "Nữ");
+                            if (rsRole.getDate("birthdate") != null) {
+                                acc.getCustomer().setBirthdate(rsRole.getDate("birthdate").toLocalDate());
+                            }
+                        }
+                    }
+                }
+                else if (acc.getShopID() != null) {
                     acc.setRoleID(acc.getShopID());
-                } else if (acc.getShipperID() != null) {
+                    String sqlShop = "SELECT * FROM shop WHERE shopID = ?";
+
+                    try (PreparedStatement psRole = conn.prepareStatement(sqlShop)) {
+                        psRole.setString(1, acc.getShopID());
+                        ResultSet rsRole = psRole.executeQuery();
+                        acc.setShop(new shop());
+                        if (rsRole.next()) {
+                            acc.getShop().setName(rsRole.getString("name"));
+                            acc.getShop().setPhone(rsRole.getString("phone"));
+                            acc.getShop().setAddress(rsRole.getString("address"));
+                            acc.getShop().setEmail(rsRole.getString("email"));
+                        }
+                    }
+                }
+                else if (acc.getShipperID() != null) {
                     acc.setRoleID(acc.getShipperID());
+                    String sqlShipper = "SELECT * FROM shipper WHERE shipperID = ?";
+
+                    try (PreparedStatement psRole = conn.prepareStatement(sqlShipper)) {
+                        psRole.setString(1, acc.getShipperID());
+                        ResultSet rsRole = psRole.executeQuery();
+                        acc.setShipper(new shipper());
+                        if (rsRole.next()) {
+                            acc.getShipper().setName(rsRole.getString("name"));
+                            acc.getShipper().setPhone(rsRole.getString("phone"));
+                            acc.getShipper().setCompanyName(rsRole.getString("companyname"));
+                        }
+                    }
                 }
                 return acc;
             }
@@ -177,7 +224,6 @@ public class accountRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -197,6 +243,51 @@ public class accountRepository {
             e.printStackTrace();
         }
 
+        return false;
+    }
+
+    public boolean updateShopProfile(String shopID, String name, String phone, String email, String address) {
+        String sql = "UPDATE shop SET name = ?, phone = ?, email = ?, address = ? WHERE shopID = ?";
+        try (Connection conn = DBconnection.openConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ps.setString(2, phone);
+            ps.setString(3, email);
+            ps.setString(4, address);
+            ps.setString(5, shopID);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateCustomerProfile(String customerID, String name, String phone) {
+        String sql = "UPDATE customer SET name = ?, phone = ? WHERE customerID = ?";
+        try (Connection conn = DBconnection.openConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ps.setString(2, phone);
+            ps.setString(3, customerID);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateShipperProfile(String shipperID, String name, String phone, String companyName) {
+        String sql = "UPDATE shipper SET name = ?, phone = ?, companyname = ? WHERE shipperID = ?";
+        try (Connection conn = DBconnection.openConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ps.setString(2, phone);
+            ps.setString(3, companyName);
+            ps.setString(4, shipperID);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return false;
     }
 }

@@ -6,15 +6,11 @@ import java.sql.SQLException;
 
 public class DBconnection {
 
-    
-    private static final String login = "sa";
-    private static final String pass = "1234";
+    private static String url = "jdbc:mysql://localhost:3306/qldh?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static String login = "root";
+    private static String pass = "123456";
 
-    private static final String url = "jdbc:sqlserver://localhost\\SQLEXPRESS;" +
-            "databaseName=QLDonHang;" +
-            "encrypt=true;trustServerCertificate=true";;
 
- 
     static {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
