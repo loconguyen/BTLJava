@@ -6,14 +6,18 @@ import java.sql.SQLException;
 
 public class DBconnection {
 
-    private static String url = "jdbc:mysql://localhost:3306/qldh?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-    private static String login = "root";
+    private static final String DATABASE_NAME = "QLDonHang";
+
+    private static final String url = "jdbc:sqlserver://localhost:1433;databaseName=" + DATABASE_NAME + ";encrypt=true;trustServerCertificate=true;";
+    private static String login = "sa";
     private static String pass = "123456";
 
 
     static {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Không load được driver", e);
         }

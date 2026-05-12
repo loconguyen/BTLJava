@@ -8,6 +8,7 @@ import presentation_layer.mdl.RatioSplitPanel;
 import repository_layer.OrderReponsitory;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
@@ -74,7 +75,6 @@ public class RevenuePanel extends JPanel {
         table = new StyledTable(model);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Chi tiết doanh thu theo tháng"));
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -113,10 +113,8 @@ public class RevenuePanel extends JPanel {
     public void initControl(JPanel sidePanel, JPanel mainPanel) {
         JButton btnQtySold = new JButton("Số lượng đã bán");
         JButton btnReneuve = new JButton("Doanh thu");
-        //
         StyledButton.button4(btnReneuve);
         StyledButton.button4(btnQtySold);
-        
 
         JPanel controlPanel = new JPanel(new GridLayout(3, 1, 10, 10));
 

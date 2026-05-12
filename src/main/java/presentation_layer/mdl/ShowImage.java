@@ -4,15 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class ShowImage extends JPanel {
+public class ShowImage {
 
-    private static JLabel lblImage = new JLabel();
+    public static JPanel showImg(URL imageUrl) {
+        JLabel lblImage = new JLabel();
 
-    public ShowImage() {
-    }
-
-    public static JPanel showImg(String imagePath) {
-        loadImage(imagePath);
+        loadImage(imageUrl, lblImage);
 
         JPanel pn = new JPanel(new BorderLayout());
         pn.add(lblImage, BorderLayout.CENTER);
@@ -20,14 +17,10 @@ public class ShowImage extends JPanel {
         return pn;
     }
 
-    private static void loadImage(String imagePath) {
-        // load ảnh từ resources (src/main/resources)
-        URL url = ShowImage.class.getClassLoader().getResource(imagePath);
+    private static void loadImage(URL imageUrl, JLabel lblImage) {
+        if (imageUrl != null) {
+            ImageIcon icon = new ImageIcon(imageUrl);
 
-        if (url != null) {
-            ImageIcon icon = new ImageIcon(url);
-
-            // lấy kích thước gốc của ảnh
             int width = icon.getIconWidth();
             int height = icon.getIconHeight();
 
@@ -42,7 +35,9 @@ public class ShowImage extends JPanel {
             lblImage.setIcon(icon);
             lblImage.setPreferredSize(new Dimension(width, height));
         } else {
-            lblImage.setText("Không tìm thấy ảnh: " + imagePath);
+            // Hiển thị báo lỗi nếu URL bị null
+            lblImage.setText("Không tìm thấy ảnh (URL rỗng)");
+            lblImage.setHorizontalAlignment(SwingConstants.CENTER);
         }
     }
 }

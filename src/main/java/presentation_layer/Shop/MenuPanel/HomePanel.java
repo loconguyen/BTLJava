@@ -88,11 +88,8 @@ public class HomePanel extends JPanel {
         StyledButton.button4(btnAdd);
         StyledButton.button4(btnEdit);
         StyledButton.button4(btnRemove);
-        
-        
 
-
-        JPanel controlPanel = new JPanel(new GridLayout(4, 1, 10, 10));
+        JPanel controlPanel = new JPanel(new GridLayout(5, 1, 10, 10));
         controlPanel.add(btnAdd);
         controlPanel.add(btnEdit);
         controlPanel.add(btnRemove);
@@ -106,7 +103,6 @@ public class HomePanel extends JPanel {
         btnImEx.addActionListener(e -> handleEventImportProduct(table, model, this.id, this));
     }
 
-    // Expose table and model so parent frames can attach search/filter controls
     public StyledTable getTable() {
         return table;
     }

@@ -28,7 +28,7 @@ public class OrderReponsitory {
         String sql = "SELECT o.*, p.*, od.quantity " +
                 "FROM orders o " +
                 "JOIN order_detail od ON o.orderID = od.orderID " +
-                "JOIN product p ON p.productID = od.productID " +
+                "JOIN Product p ON p.productID = od.productID " +
                 "WHERE o.status = ? ";
 
         if (shopID != null && !shopID.trim().isEmpty()) {
@@ -104,7 +104,7 @@ public class OrderReponsitory {
         String sql = "SELECT o.*, p.*, od.quantity " +
                 "FROM orders o " +
                 "JOIN order_detail od ON o.orderID = od.orderID " +
-                "JOIN product p ON p.productID = od.productID " +
+                "JOIN Product p ON p.productID = od.productID " +
                 "WHERE o.status = ? ";
 
         if (shipperID != null && !shipperID.trim().isEmpty()) {
@@ -196,7 +196,7 @@ public class OrderReponsitory {
         String sql = "SELECT o.*, p.*, od.quantity " +
                 "FROM orders o " +
                 "JOIN order_detail od ON o.orderID = od.orderID " +
-                "JOIN product p ON p.productID = od.productID " +
+                "JOIN Product p ON p.productID = od.productID " +
                 "WHERE p.shopID = ? and o.status = ?";
 
         if (date != null) {
@@ -236,7 +236,7 @@ public class OrderReponsitory {
         String sql = "SELECT MIN(o.orderDate) AS minDate " +
                 "FROM orders o " +
                 "JOIN order_detail od ON o.orderID = od.orderID " +
-                "JOIN product p ON p.productID = od.productID " +
+                "JOIN Product p ON p.productID = od.productID " +
                 "WHERE p.shopID = ?";
 
         try (Connection con = DBconnection.openConnection();
@@ -414,33 +414,33 @@ public class OrderReponsitory {
     }
 
     private void insertOrderRow(Connection con,
-            String orderID,
-            String customerID,
-            String addressID,
-            String paymentID,
-            double amount,
-            double freight) throws SQLException {
+                                String orderID,
+                                String customerID,
+                                String addressID,
+                                String paymentID,
+                                double amount,
+                                double freight) throws SQLException {
 
-String sql = "INSERT INTO Orders "
-+ "(orderID, customerID, shipperID, orderDate, shippedDate, freight, addressID, paymentID, status, amount) "
-+ "VALUES (?, ?, NULL, GETDATE(), NULL, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Orders "
+                + "(orderID, customerID, shipperID, orderDate, shippedDate, freight, addressID, paymentID, status, amount) "
+                + "VALUES (?, ?, NULL, GETDATE(), NULL, ?, ?, ?, ?, ?)";
 
-try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-ps.setString(1, orderID);        // orderID
-ps.setString(2, customerID);     // customerID
-ps.setDouble(3, freight);        // freight
-ps.setString(4, addressID);      // addressID
-ps.setString(5, paymentID);      // paymentID
-ps.setString(6, "PENDING");      // status
-ps.setDouble(7, amount);         // amount
+            ps.setString(1, orderID);        // orderID
+            ps.setString(2, customerID);     // customerID
+            ps.setDouble(3, freight);        // freight
+            ps.setString(4, addressID);      // addressID
+            ps.setString(5, paymentID);      // paymentID
+            ps.setString(6, "PENDING");      // status
+            ps.setDouble(7, amount);         // totalamount
 
-int row = ps.executeUpdate();
-if (row <= 0) {
-throw new SQLException("Insert Orders thất bại.");
-}
-}
-}
+            int row = ps.executeUpdate();
+            if (row <= 0) {
+                throw new SQLException("Insert Orders thất bại.");
+            }
+        }
+    }
 
     private void insertOrderDetails(Connection con, String orderID, List<CartItem> items) throws SQLException {
         String sql = "INSERT INTO Order_Detail(orderID, productID, unitPrice, quantity, discount) "

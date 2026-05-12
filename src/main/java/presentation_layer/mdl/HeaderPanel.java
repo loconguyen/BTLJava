@@ -10,6 +10,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.util.regex.Pattern;
 
 public class HeaderPanel extends JPanel {
     private JLabel lblUsername;
@@ -95,7 +96,7 @@ public class HeaderPanel extends JPanel {
                 if (text == null || text.trim().length() == 0) {
                     sorter.setRowFilter(null);
                 } else {
-                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(text)));
                 }
             }
         });

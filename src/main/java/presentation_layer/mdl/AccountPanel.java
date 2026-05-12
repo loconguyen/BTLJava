@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static presentation_layer.mdl.HandleAction.*;
 import static presentation_layer.mdl.HandleAction.handleChangeAva;
@@ -123,7 +125,13 @@ public class AccountPanel extends JPanel {
         JPanel avatarPanel = new JPanel();
         avatarPanel.setLayout(new BoxLayout(avatarPanel, BoxLayout.Y_AXIS));
         avatarPanel.setBackground(Color.WHITE);
-        JPanel imgPanel = showImg("images/P001.png");
+        URL url = null;
+        try {
+            url = new URL("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm3CGrvHN8sa-aUaHEqeywwSgiPxUTaGgdkA&s");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        JPanel imgPanel = showImg(url);
 
         Dimension avatarSize = new Dimension(120, 120);
         if (imgPanel != null) {

@@ -19,9 +19,9 @@ public class PaymentRepository {
     public List<methodPayment> findAll() {
         List<methodPayment> list = new ArrayList<methodPayment>();
 
-        String sql = "SELECT paymentID, paymentMethod " +
-                     "FROM PaymentMethod " +
-                     "ORDER BY paymentID";
+        String sql = "SELECT payID, paymentMethod " +
+                     "FROM Method_Payment " +
+                     "ORDER BY payID";
 
         try (
                 Connection con = DBconnection.openConnection();
@@ -30,7 +30,7 @@ public class PaymentRepository {
         ) {
             while (rs.next()) {
                 methodPayment item = new methodPayment();
-                item.setPayID(rs.getString("paymentID"));
+                item.setPayID(rs.getString("payID"));
                 item.setPaymentMethod(rs.getString("paymentMethod"));
                 list.add(item);
             }

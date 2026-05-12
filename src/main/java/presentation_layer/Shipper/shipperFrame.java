@@ -96,7 +96,7 @@ public class shipperFrame extends JFrame implements SidebarCallback {
         content.repaint();
     }
 
-//    public static void main(String[] args) {
+//    public static void app.main(String[] args) {
 //        new shipperFrame("Shipper Owner", "SH003").setVisible(true);
 //    }
 

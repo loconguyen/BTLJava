@@ -91,7 +91,6 @@ public class StatusPanel extends JPanel {
 
     }
 
-    // Expose table and model so parent frames can attach search/filter controls
     public StyledTable getTable() {
         return table;
     }

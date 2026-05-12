@@ -10,8 +10,12 @@ import service_layer.ProductService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import static presentation_layer.mdl.ShowImage.showImg;
 
 public class ProductListPanel extends JPanel {
 
@@ -181,7 +185,6 @@ public class ProductListPanel extends JPanel {
         card.setPreferredSize(new Dimension(185, 285));
 
         JLabel lblImage = createImageLabel(p.getImagePath());
-        lblImage.setPreferredSize(new Dimension(185, 140));
 
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
@@ -266,7 +269,7 @@ public class ProductListPanel extends JPanel {
             if (imagePath != null && !imagePath.trim().isEmpty()) {
 
                 // load từ resources giống code test của m
-                java.net.URL url = getClass().getClassLoader().getResource(imagePath);
+                java.net.URL url = new URL(imagePath);
 
                 if (url != null) {
                     ImageIcon icon = new ImageIcon(url);

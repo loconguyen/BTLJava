@@ -13,41 +13,36 @@ import javax.swing.table.TableCellRenderer;
 
 public class StyledTable extends JTable {
 
-    // Constructor nhận trực tiếp Model từ bên ngoài truyền vào
     public StyledTable(DefaultTableModel model) {
         super(model);
-        initTableStyle(); // Gọi hàm làm đẹp sau khi đã gán model
+        initTableStyle();
     }
 
-    // Hàm chứa toàn bộ cài đặt giao diện
     private void initTableStyle() {
-        // 1. Cài đặt cơ bản: Font, Chiều cao, Chọn 1 dòng
+        // Font, Chiều cao, Chọn 1 dòng
         setFont(new Font("Arial", Font.PLAIN, 13));
         setRowHeight(30);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // 2. Xóa toàn bộ viền bảng (Không viền)
-        setShowGrid(false); // Tắt viền lưới mặc định
-        setIntercellSpacing(new Dimension(0, 0)); // Xóa khoảng cách giữa các ô
-        setBorder(BorderFactory.createEmptyBorder()); // Xóa viền ngoài của bảng
+        setShowGrid(false); // vien trong
+        setIntercellSpacing(new Dimension(0, 0));
+        setBorder(BorderFactory.createEmptyBorder()); // vien ngoai
 
-        // 3. Cài đặt màu khi chọn dòng
-        setSelectionBackground(new Color(123, 207, 255)); // Màu xanh lơ nhạt
-        setSelectionForeground(Color.BLACK); // Chữ màu đen khi chọn
+        setSelectionBackground(new Color(90, 172, 224));
+        setSelectionForeground(Color.BLACK);
 
-        // 4. Cài đặt Header (Tiêu đề)
+        // header
         getTableHeader().setFont(new Font("Arial", Font.BOLD, 15));
-        getTableHeader().setReorderingAllowed(false); // Không cho kéo thả cột
-        getTableHeader().setBackground(new Color(240, 240, 240)); // Xám nhạt
+        getTableHeader().setReorderingAllowed(false); // keo tha
+        getTableHeader().setBackground(new Color(240, 240, 240));
         getTableHeader().setBorder(BorderFactory.createEmptyBorder()); // Xóa viền header
     }
 
-    // 5. Tô màu dòng chẵn/dòng lẻ (Zebra striping)
+    // highlight chan le
     @Override
     public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         Component comp = super.prepareRenderer(renderer, row, column);
-
-        // Chỉ tô màu xen kẽ nếu dòng đó KHÔNG được chọn
+        // k chon moi to
         if (!isCellSelected(row, column)) {
             comp.setBackground(row % 2 == 0 ? Color.WHITE : Color.decode("#D9D9D9"));
             comp.setForeground(Color.BLACK);
@@ -55,7 +50,7 @@ public class StyledTable extends JTable {
         return comp;
     }
 
-    // 6. Xóa viền của thanh cuộn JScrollPane chứa bảng này
+    //scroll
     @Override
     protected void configureEnclosingScrollPane() {
         super.configureEnclosingScrollPane();

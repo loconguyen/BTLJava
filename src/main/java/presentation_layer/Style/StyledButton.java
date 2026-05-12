@@ -77,7 +77,6 @@ public class StyledButton extends JButton {
         button.setBackground(SetColor.cam1);
         button.setForeground(Color.white);
 
-        // Thêm padding cho nút rộng rãi, đẹp hơn (Trên: 8, Trái: 20, Dưới: 8, Phải: 20)
         button.setBorder(new EmptyBorder(8, 20, 8, 20));
 
         applyModernStyle(button);
@@ -85,10 +84,9 @@ public class StyledButton extends JButton {
     }
 
     private static void applyModernStyle(JButton button) {
-        button.setFocusPainted(false);   // Xóa khung vuông đứt nét khi click
-        button.setBorderPainted(false);  // Xóa viền 3D mặc định của Swing
-        button.setOpaque(true);          // Đảm bảo màu nền được tô đầy
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Trỏ chuột hình bàn tay
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
 

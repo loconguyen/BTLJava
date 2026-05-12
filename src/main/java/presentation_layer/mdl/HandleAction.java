@@ -13,6 +13,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.function.Function;
@@ -102,14 +104,14 @@ public class HandleAction {
                             .orElse(null);
 
                     if (selectedItem != null) {
-                        JPanel panel = callback.buildMessage(selectedItem); // nhan vao 1 panel
+                        JPanel panel = callback.buildMessage(selectedItem); // nhan vao thong tin sp
 
                         JOptionPane.showOptionDialog(
                                 null,
                                 panel,
                                 "Chi tiết",
                                 JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.PLAIN_MESSAGE,// Hoặc JOptionPane.OK_CANCEL_OPTION
+                                JOptionPane.PLAIN_MESSAGE,// JOptionPane.OK_CANCEL_OPTION
                                 null,
                                 new Object[]{}, // Mảng rỗng = không có nút
                                 null
@@ -128,16 +130,26 @@ public class HandleAction {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15)); // Căn lề ngoài
         String imgPath = new ProductRepository().getImagePath(p.getProductID());
         if (imgPath != null) {
-            JPanel imgPanel = showImg(imgPath);
+            URL url = null;
+            try {
+                url = new URL(imgPath);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("URL ảnh: " + url);
+            JPanel imgPanel = showImg(url);
             if (imgPanel != null) {
                 mainPanel.add(imgPanel, BorderLayout.WEST);
+                mainPanel.revalidate();
+                mainPanel.repaint();
             }
         } else {
-            // Nếu không có ảnh, hiển thị một ô xám thay thế
             JLabel lblNoImage = new JLabel("Không có ảnh", SwingConstants.CENTER);
-            lblNoImage.setPreferredSize(new Dimension(200, 200)); // Kích thước ảnh mặc định
+            lblNoImage.setPreferredSize(new Dimension(200, 200));
             lblNoImage.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
             mainPanel.add(lblNoImage, BorderLayout.WEST);
+            mainPanel.revalidate();
+            mainPanel.repaint();
         }
 
         JPanel infoPanel = new JPanel(new GridLayout(0, 2, 10, 15));
@@ -149,11 +161,10 @@ public class HandleAction {
                 {"Mã sản phẩm:", p.getProductID()},
                 {"Tên sản phẩm:", p.getName()},
                 {"Danh mục (CatID):", p.getCatgID()},
-                {"Đơn giá:", String.format("%,.0f VND", p.getUnitPrice())}, // Format tiền tệ đẹp
+                {"Đơn giá:", String.format("%,.0f VND", p.getUnitPrice())}, // Format
                 {"Tồn kho:", String.valueOf(p.getUnitInStock())},
-                {"Đơn vị:", p.getQuantityPerUnit()}
-                // Nếu có trường Discontinued thì bạn có thể mở dòng dưới:
-                // {"Trạng thái:", p.isDiscontinued() ? "Ngừng bán" : "Đang bán"}
+                {"Đơn vị:", p.getQuantityPerUnit()},
+                {"Trạng thái:", p.isDiscontinued() ? "Ngừng bán" : "Đang bán"}
         };
 
         for (String[] detail : productDetails) {
@@ -177,7 +188,6 @@ public class HandleAction {
             infoPanel.add(lblValue);
         }
 
-        // Thêm infoPanel vào phần giữa của mainPanel
         mainPanel.add(infoPanel, BorderLayout.CENTER);
 
         return mainPanel;
@@ -383,17 +393,14 @@ public class HandleAction {
 
     //--------------------- handleAction for HomePanel------------------
     public static void handleEventAddProduct(JTable table, DefaultTableModel model, String shopId, Component parent) {
-        // Tạo dialog
         JDialog dialog = new JDialog((Frame) null, "Thêm sản phẩm", true);
         dialog.setLayout(new GridLayout(0, 2, 10, 10));
 
-        // Các trường nhập liệu
         JTextField txtCatgID = new JTextField();
         JTextField txtName = new JTextField();
         JTextField txtUnitPrice = new JTextField();
         JTextField txtUnitInStock = new JTextField();
 
-        // shopID hiển thị nhưng không sửa
         JTextField txtShopID = new JTextField(shopId);
         txtShopID.setEditable(false);
 
@@ -480,8 +487,12 @@ public class HandleAction {
         String productID = (String) model.getValueAt(row, 0);
         String catagID = (String) model.getValueAt(row, 1);
         String name = (String) model.getValueAt(row, 2);
-        double unitPrice = (double) model.getValueAt(row, 3);
-        int unitInStock = (int) model.getValueAt(row, 4);
+        String priceStr = model.getValueAt(row, 3).toString().replace(",", "").replace(" VNĐ", "").trim();
+        String stockStr = model.getValueAt(row, 4).toString().replace(",", "").trim();
+
+        double unitPrice = Double.parseDouble(priceStr);
+        int unitInStock = Integer.parseInt(stockStr);
+
         String quantityPerUnit = (String) model.getValueAt(row, 5);
 
         // Tạo dialog sửa
@@ -640,7 +651,6 @@ public class HandleAction {
             });
         }
 
-        // cập nhật lại sự kiện double click với danh sách mới
         handleDClickRowTable(table,
                 orderList,
                 o -> o.getOrderID(),
@@ -925,11 +935,17 @@ public class HandleAction {
     public static void handleChangeAva(Dimension avatarSize, JPanel avatarPanel){
         String inputText = JOptionPane.showInputDialog(
                 null,
-                "Vui lòng nhập lý do hủy đơn hàng:",
+                "Url avatar:",
                 "Nhập thông tin",
                 JOptionPane.QUESTION_MESSAGE
         );
-        JPanel imgPanel = showImg(inputText);
+        URL url = null;
+        try {
+            url = new URL(inputText);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        JPanel imgPanel = showImg(url);
         if (imgPanel != null) {
             imgPanel.setPreferredSize(avatarSize);
             imgPanel.setMinimumSize(avatarSize);

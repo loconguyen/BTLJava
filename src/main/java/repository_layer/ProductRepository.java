@@ -170,8 +170,8 @@ public class ProductRepository {
              ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
-                String lastID = rs.getString("productID"); // CU015
-                int number = Integer.parseInt(lastID.substring(2));
+                String lastID = rs.getString("productID"); // P015
+                int number = Integer.parseInt(lastID.substring(1));
                 return String.format("P%03d", number + 1);
             }
 
@@ -272,7 +272,7 @@ public class ProductRepository {
         String sql = "SELECT p.productID, p.catgID, p.name, SUM(od.quantity) AS totalQuantity " +
                 "FROM orders o " +
                 "JOIN order_detail od ON o.orderID = od.orderID " +
-                "JOIN product p ON p.productID = od.productID " +
+                "JOIN Product p ON p.productID = od.productID " +
                 "WHERE p.shopID = ? AND o.status = 'DELIVERED'" +
                 "GROUP BY p.productID, p.catgID, p.name " +
                 "ORDER BY totalQuantity DESC";
@@ -302,11 +302,14 @@ public class ProductRepository {
                 "FROM order_detail od " +
                 "JOIN Product p ON od.productID = p.productID " +
                 "WHERE od.orderID = ? AND p.unitInStock < od.quantity";
-        String sql = "UPDATE Product p " +
+
+// Đã sửa lại cú pháp UPDATE FROM cho chuẩn SQL Server
+        String sql = "UPDATE p " +
+                "SET unitInStock = p.unitInStock - od.quantity " +
+                "FROM Product p " +
                 "JOIN order_detail od ON p.productID = od.productID " +
                 "JOIN orders o ON o.orderID = od.orderID " +
-                "SET p.unitInStock = p.unitInStock - od.quantity " +
-                "WHERE o.orderID = ? ";
+                "WHERE o.orderID = ?";
 
         try (Connection con = DBconnection.openConnection();
             PreparedStatement checkPS = con.prepareStatement(checkSql)) {
