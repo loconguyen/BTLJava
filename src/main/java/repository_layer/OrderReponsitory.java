@@ -398,13 +398,12 @@ public class OrderReponsitory {
     }
 
     private void insertPayment(Connection con, String paymentID, double amount, String payID) throws SQLException {
-        String sql = "INSERT INTO Payment(paymentID, amount, paymentDate, payID) "
-                + "VALUES (?, ?, GETDATE(), ?)";
+        String sql = "INSERT INTO Payment(paymentID, paymentDate, payID) "
+                + "VALUES (?, GETDATE(), ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, paymentID);
-            ps.setDouble(2, amount);
-            ps.setString(3, payID);
+            ps.setString(2, payID);
 
             int row = ps.executeUpdate();
             if (row <= 0) {
@@ -423,7 +422,7 @@ public class OrderReponsitory {
 
         String sql = "INSERT INTO Orders "
                 + "(orderID, customerID, shipperID, orderDate, shippedDate, freight, addressID, paymentID, status, amount) "
-                + "VALUES (?, ?, NULL, GETDATE(), NULL, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, NULL, getdate(), NULL, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -479,7 +478,7 @@ public class OrderReponsitory {
 
         // nếu là DELIVERED → cập nhật ngày giao
         if ("DELIVERED".equalsIgnoreCase(newStatus)) {
-            sql.append(", shippedDate = GETDATE()");
+            sql.append(", shippedDate = getdate()");
         }
 
         sql.append(" WHERE orderID = ?");

@@ -339,16 +339,16 @@ public class HandleAction {
             //format price
             DecimalFormat df = new DecimalFormat("#,###");
 
-            document.add(new Paragraph("Hóa đơn bán hàng").setFontSize(20).setTextAlignment(TextAlignment.CENTER));
+            document.add(new Paragraph("Hoa Don Ban Hang").setFontSize(20).setTextAlignment(TextAlignment.CENTER));
             document.add(new Paragraph("Order ID: " + o.getOrderID()));
             document.add(new Paragraph("Customer: " + o.getCustomerID()));
 
             Table table = new Table(new float[]{2, 2, 1, 2}); // 4 cot
             table.setWidth(UnitValue.createPercentValue(100)); //100 width pdf
-            table.addHeaderCell("Tên sản phẩm");
-            table.addHeaderCell("Giá");
+            table.addHeaderCell("Ten san pham");
+            table.addHeaderCell("Gia");
             table.addHeaderCell("SL");
-            table.addHeaderCell("Tổng");
+            table.addHeaderCell("Tong");
 
             for (order_detail item : o.getItems()) {
                 table.addCell(item.getProduct().getName());
@@ -361,7 +361,7 @@ public class HandleAction {
 
             document.add(table);
             String amount = df.format(o.getAmount());
-            document.add(new Paragraph("\nTổng tiền: " + amount).setTextAlignment(TextAlignment.RIGHT));
+            document.add(new Paragraph("\nTong tien: " + amount).setTextAlignment(TextAlignment.RIGHT));
 
             document.close();
         } catch (Exception e) {
